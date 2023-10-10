@@ -21,6 +21,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -31,32 +33,37 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.mikali.crudplayground.R
+import com.mikali.crudplayground.model.PostItem
 import com.mikali.crudplayground.navigation.NavigationScreens
 import com.mikali.crudplayground.ui.theme.Yellow
+import com.mikali.crudplayground.viewmodel.ListScreenViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ListScreen(navController: NavHostController) {
 
+    val listScreenViewModel: ListScreenViewModel = viewModel()
+    val uiState: State<List<PostItem>> = listScreenViewModel.myPost.collectAsState()
+
     //TODO-move to viewModel
     var showDialog = remember { mutableStateOf(false) }
-
 
     Scaffold(
         topBar = {
             Column {
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    text = "CRUD Playground",
+                    text = stringResource(R.string.crud_playground),
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    text = "Description",
+                    text = stringResource(R.string.description),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -73,7 +80,7 @@ fun ListScreen(navController: NavHostController) {
             }
         },
         content = {
-            ListScreen(showDialog = showDialog, paddingValues = it)
+            ListScreen(postItems = uiState.value, showDialog = showDialog, paddingValues = it)
         }
     )
 
@@ -84,13 +91,13 @@ fun ListScreen(navController: NavHostController) {
 }
 
 @Composable
-fun ListScreen(showDialog: MutableState<Boolean>, paddingValues: PaddingValues) {
-    val data = listOf(
-        "title" to "body",
-        "title" to "body",
-        "title" to "body",
-    )
-    ListOfLazyCard(showDialog = showDialog, paddingValues = paddingValues, data = data)
+fun ListScreen(
+    showDialog: MutableState<Boolean>,
+    paddingValues: PaddingValues,
+    postItems: List<PostItem>,
+) {
+
+    ListOfLazyCard(showDialog = showDialog, paddingValues = paddingValues, postItems = postItems)
 
 }
 
@@ -98,14 +105,15 @@ fun ListScreen(showDialog: MutableState<Boolean>, paddingValues: PaddingValues) 
 fun ListOfLazyCard(
     showDialog: MutableState<Boolean>,
     paddingValues: PaddingValues,
-    data: List<Pair<String, String>>,
+    postItems: List<PostItem>,
 ) {
     LazyColumn(modifier = Modifier.padding(paddingValues = paddingValues)) {
-        items(items = data) { cardItem ->
+        items(items = postItems) { cardItem ->
             CustomCard(
                 showDialog = showDialog,
-                title = cardItem.first,
-                body = cardItem.second,
+                title = cardItem.title,
+                imageUrl = cardItem.image_url,
+                body = cardItem.body,
             )
         }
     }
@@ -113,7 +121,12 @@ fun ListOfLazyCard(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomCard(title: String, body: String, showDialog: MutableState<Boolean>) {
+fun CustomCard(
+    title: String,
+    body: String,
+    imageUrl: String,
+    showDialog: MutableState<Boolean>
+) {
     Card(
         modifier = Modifier
             .padding(16.dp)
@@ -130,7 +143,7 @@ fun CustomCard(title: String, body: String, showDialog: MutableState<Boolean>) {
 
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://example.com/image.jpg")
+                    .data(imageUrl)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(R.drawable.ic_launcher_background),
