@@ -21,4 +21,23 @@ class PostRepository(
             }
         }
     }
+
+    //Asynchronous execution using enqueue and callbacks.
+    /*    fun getAllPosts(callback: (List<PostItem>?, Throwable?) -> Unit) {
+            val call = postService.getAllPosts()
+
+            call.enqueue(object : Callback<List<PostItem>> {
+                override fun onResponse(call: Call<List<PostItem>>, response: Response<List<PostItem>>) {
+                    if (response.isSuccessful) {
+                        callback(response.body(), null)
+                    } else {
+                        callback(null, IOException("Error fetching posts, response: ${response.errorBody()}"))
+                    }
+                }
+
+                override fun onFailure(call: Call<List<PostItem>>, t: Throwable) {
+                    callback(null, t)
+                }
+            })
+        }*/
 }

@@ -23,7 +23,7 @@ object RetrofitInstance {
     val instance: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())  //retrofit won't know how to convert the http response body into your desired data type, if you don't add a converterFactory, other converter factory (ex.moshi)
             .client(client)
             .build()
     }

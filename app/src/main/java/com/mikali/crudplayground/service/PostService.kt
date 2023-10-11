@@ -24,7 +24,19 @@ interface PostService {
      * this is just using retrofit annotations to describe http api calls in kotlin
      */
     @GET("posts")
-    suspend fun getAllPosts(): Response<List<PostItem>>
+    suspend fun getAllPosts(): Response<List<PostItem>> //Utilizing Kotlin coroutines.
 
+    /**
+     * Asynchronous execution using enqueue and callbacks. We have the dependency from
+     * from retrofit2 to get Call return type
+     */
+    /*    @GET("posts")
+        fun getAllPosts(): Call<List<PostItem>>*/
+
+    /**
+     * Using Reactive Programming (RxJava). Need to add RxJava dependency
+     */
+    /*    @GET("posts")
+        fun getAllPosts(): Observable<List<PostItem>>*/
 
 }

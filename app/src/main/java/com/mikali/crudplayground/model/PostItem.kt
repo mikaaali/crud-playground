@@ -1,11 +1,11 @@
 package com.mikali.crudplayground.model
 
 /**
- * There is already a converter that's configured in retrofit builder that allow you to parse JSON
- * object with the exact matching key
+ * The converter we are currently using here is Gson to serialize/deserialize JSON
+ * there are other library options: jackson, Gson, Moshi, kotlinx.serialization, etc
  *
- * when dealing with nested JSON and and keys that do not match exactly with kotlin field, we need
- * to use a thrid party serialization library, ex jackson, Gson, Moshi, kotlinx.serialization, etc.
+ * when dealing with nested JSON and and keys that do not match exactly with kotlin field, we typically need add
+ * some annotation (ex. @SerializaedName, part of Gson lib)
  */
 data class PostItem(
     val id: Int,

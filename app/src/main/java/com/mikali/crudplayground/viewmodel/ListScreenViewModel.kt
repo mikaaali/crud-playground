@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 
 class ListScreenViewModel : ViewModel() {
 
-    private val _myPost = MutableStateFlow<List<PostItem>>(emptyList())
-    val myPost: StateFlow<List<PostItem>> = _myPost
+    private val _posts = MutableStateFlow<List<PostItem>>(emptyList())
+    val post: StateFlow<List<PostItem>> = _posts
 
     private val postRepository = PostRepository()
 
@@ -19,12 +19,31 @@ class ListScreenViewModel : ViewModel() {
         fetchAllPosts()
     }
 
-
     private fun fetchAllPosts() {
         viewModelScope.launch {
             val response = postRepository.getAllPosts()
-            _myPost.value = response
+            _posts.value = response
         }
     }
+
+
+    //Asynchronous execution using enqueue and callbacks.
+    /*    private fun fetchAllPosts() {
+            viewModelScope.launch {
+                postRepository.getAllPosts() { fetchedPosts, err ->
+                    if (fetchedPosts != null) {
+                        */
+    /**
+     * Using a sealed class can be a more idiomatic way to represent either
+     * a successful result or an error, instead of two separate instances of StateFlow
+     *//*
+                    _posts.value = fetchedPosts
+                } else if (err != null) {
+                    _error.value = err
+                }
+            }
+        }
+    }*/
+
 
 }

@@ -48,7 +48,7 @@ import com.mikali.crudplayground.viewmodel.ListScreenViewModel
 fun ListScreen(navController: NavHostController) {
 
     val listScreenViewModel: ListScreenViewModel = viewModel()
-    val uiState: State<List<PostItem>> = listScreenViewModel.myPost.collectAsState()
+    val uiState: State<List<PostItem>> = listScreenViewModel.post.collectAsState()
 
     //TODO-move to viewModel
     var showDialog = remember { mutableStateOf(false) }
