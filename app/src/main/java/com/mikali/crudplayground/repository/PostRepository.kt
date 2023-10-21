@@ -1,19 +1,20 @@
 package com.mikali.crudplayground.repository
 
-import com.mikali.crudplayground.model.PostItem
-import com.mikali.crudplayground.service.PostService
+import com.mikali.crudplayground.data.network.model.PostItem
+import com.mikali.crudplayground.service.PostApiService
 import com.mikali.crudplayground.service.RetrofitInstance
+import com.mikali.crudplayground.ui.model.PostInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class PostRepository(
-    private val postService: PostService = RetrofitInstance.instance.create(PostService::class.java)
+    private val postApiService: PostApiService = RetrofitInstance.instance.create(PostApiService::class.java)
 ) {
 
     suspend fun getAllPosts(): List<PostItem> {
         //Network data flow run on IO thread
         return withContext(Dispatchers.IO) {
-            val response = postService.getAllPosts()
+            val response = postApiService.getAllPosts()
             if (response.isSuccessful) {
                 response.body()!!
             } else {
@@ -40,4 +41,50 @@ class PostRepository(
                 }
             })
         }*/
+
+    suspend fun createPost(title: String?, body: String?) : PostItem? {
+        return withContext(Dispatchers.IO){
+            val response = postApiService.createNewPost(postItem = PostItem(title = title, body = body))
+            if(response.isSuccessful){
+                response.body()
+            }else{
+                null
+            }
+
+        }
+    }
+
+    suspend fun getSinglePost(id: Int): PostItem? {
+        return withContext(Dispatchers.IO){
+            val response = postApiService.getSinglePost(id= id)
+            if(response.isSuccessful){
+                response.body()
+            }else{
+                null
+            }
+
+        }
+    }
+
+    suspend fun updatePost(id: Int, postInput: PostInput) :PostItem? {
+        return withContext(Dispatchers.IO){
+            val response = postApiService.updateExistingPost(id = id, postInput = postInput)
+            if(response.isSuccessful){
+                response.body()
+            }else{
+                null
+            }
+        }
+    }
+
+    suspend fun deleteSinglePost(id: Int) {
+        return withContext(Dispatchers.IO){
+            val response = postApiService.deleteSinglePost(id = id)
+            if(response.isSuccessful){
+                //TODO
+            }else{
+                null
+            }
+        }
+    }
 }

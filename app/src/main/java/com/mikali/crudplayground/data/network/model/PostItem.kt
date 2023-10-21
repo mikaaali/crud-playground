@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.model
+package com.mikali.crudplayground.data.network.model
 
 /**
  * The converter we are currently using here is Gson to serialize/deserialize JSON
@@ -8,8 +8,7 @@ package com.mikali.crudplayground.model
  * some annotation (ex. @SerializaedName, part of Gson lib)
  */
 data class PostItem(
-    val id: Int,
-    val title: String,
-    val body: String,
-    val image_url: String,
+    val id: Int? = null,
+    val title: String? = null,
+    val body: String? = null,
 )

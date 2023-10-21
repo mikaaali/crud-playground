@@ -84,4 +84,7 @@ dependencies {
     // logging interceptor
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
 
+    // androidx.compose.material.pullrefresh
+    implementation("androidx.compose.material:material:1.5.4")
+
 }

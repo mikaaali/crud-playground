@@ -17,16 +17,22 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.mikali.crudplayground.navigation.NavigationScreens
+import com.mikali.crudplayground.viewmodel.PostSharedViewModel
 
 @Composable
 fun CardActionDialog(onDismiss: () -> Unit, navController: NavHostController) {
+
+    val viewModel: PostSharedViewModel = viewModel()
+
     // Grey box fill the entire screen
     Box(
         modifier = Modifier
@@ -58,7 +64,13 @@ fun CardActionDialog(onDismiss: () -> Unit, navController: NavHostController) {
                             .fillMaxWidth()
                             .clickable {
                                 // handle item click
-                                navController.navigate(route = NavigationScreens.EDIT.name)
+                                if (item == "Edit") {
+                                     viewModel.onEditButtonClick()
+                                    navController.navigate(route = NavigationScreens.EDIT.name)
+                                } else {
+                                    viewModel.onDeleteButtonClick()
+                                }
+                                onDismiss()
                             }
                             .padding(8.dp)
                             .wrapContentWidth(Alignment.CenterHorizontally) // centers the text

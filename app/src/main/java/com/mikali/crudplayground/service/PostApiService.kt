@@ -1,10 +1,16 @@
 package com.mikali.crudplayground.service
 
-import com.mikali.crudplayground.model.PostItem
+import com.mikali.crudplayground.data.network.model.PostItem
+import com.mikali.crudplayground.ui.model.PostInput
 import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
 
-interface PostService {
+interface PostApiService {
 
     //full url: https://kqq8fq6m-3000.usw2.devtunnels.ms/posts
     /**
@@ -38,5 +44,20 @@ interface PostService {
      */
     /*    @GET("posts")
         fun getAllPosts(): Observable<List<PostItem>>*/
+
+    @POST("posts")
+    suspend fun createNewPost(@Body postItem: PostItem): Response<PostItem>
+
+    @GET("posts/{id}")
+    suspend fun getSinglePost(@Path("id") id: Int): Response<PostItem>
+
+    @PATCH("posts/{id}")
+    suspend fun updateExistingPost(
+        @Path("id") id: Int,
+        @Body postInput: PostInput
+    ): Response<PostItem>
+
+    @DELETE("posts/{id}")
+    suspend fun deleteSinglePost(@Path("id") id: Int) : Response<*>
 
 }
