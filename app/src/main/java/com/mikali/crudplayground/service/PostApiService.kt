@@ -1,7 +1,6 @@
 package com.mikali.crudplayground.service
 
-import com.mikali.crudplayground.data.network.model.PostItem
-import com.mikali.crudplayground.ui.model.PostInput
+import com.mikali.crudplayground.data.network.model.PostItemResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -30,7 +29,7 @@ interface PostApiService {
      * this is just using retrofit annotations to describe http api calls in kotlin
      */
     @GET("posts")
-    suspend fun getAllPosts(): Response<List<PostItem>> //Utilizing Kotlin coroutines.
+    suspend fun getAllPosts(): Response<List<PostItemResponse>> //Utilizing Kotlin coroutines.
 
     /**
      * Asynchronous execution using enqueue and callbacks. We have the dependency from
@@ -46,18 +45,19 @@ interface PostApiService {
         fun getAllPosts(): Observable<List<PostItem>>*/
 
     @POST("posts")
-    suspend fun createNewPost(@Body postItem: PostItem): Response<PostItem>
+    suspend fun createNewPost(@Body postItemResponse: PostItemResponse): Response<PostItemResponse>
 
     @GET("posts/{id}")
-    suspend fun getSinglePost(@Path("id") id: Int): Response<PostItem>
+    suspend fun getSinglePost(@Path("id") id: Int): Response<PostItemResponse>
 
+    //Use Patch instead of Put because we don't want to override everything
     @PATCH("posts/{id}")
     suspend fun updateExistingPost(
         @Path("id") id: Int,
-        @Body postInput: PostInput
-    ): Response<PostItem>
+        @Body postItemResponse: PostItemResponse
+    ): Response<PostItemResponse>
 
     @DELETE("posts/{id}")
-    suspend fun deleteSinglePost(@Path("id") id: Int) : Response<*>
+    suspend fun deleteSinglePost(@Path("id") id: Int): Response<*>
 
 }

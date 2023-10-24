@@ -7,8 +7,8 @@ package com.mikali.crudplayground.data.network.model
  * when dealing with nested JSON and and keys that do not match exactly with kotlin field, we typically need add
  * some annotation (ex. @SerializaedName, part of Gson lib)
  */
-data class PostItem(
-    val id: Int? = null,
-    val title: String? = null,
-    val body: String? = null,
+data class PostItemResponse(
+    val id: Int?,
+    val title: String?,
+    val body: String?,
 )

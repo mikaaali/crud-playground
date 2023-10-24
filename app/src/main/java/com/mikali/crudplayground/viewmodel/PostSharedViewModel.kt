@@ -3,10 +3,9 @@ package com.mikali.crudplayground.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mikali.crudplayground.data.network.model.PostItem
 import com.mikali.crudplayground.repository.PostRepository
 import com.mikali.crudplayground.service.NetworkResult
-import com.mikali.crudplayground.ui.model.PostInput
+import com.mikali.crudplayground.ui.model.PostItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,7 +25,13 @@ class PostSharedViewModel : ViewModel() {
      * but avoid making the state so large
      * that it becomes unwieldy or difficult to understand
      */
-    private val _singlePostUiState = MutableStateFlow(PostItem())
+    private val _singlePostUiState = MutableStateFlow(
+        PostItem(
+            id = null,
+            title = null,
+            body = null,
+        )
+    )
     val singlePostUiState: StateFlow<PostItem> = _singlePostUiState
 
     fun updateTitle(title: String) {
@@ -74,12 +79,13 @@ class PostSharedViewModel : ViewModel() {
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    val posts = networkResult.data as List<PostItem>
+                    val posts: List<PostItem> = networkResult.data as List<PostItem>
                     _postListUiState.value = posts
                 }
 
                 is NetworkResult.NetworkFailure -> {
                     Log.d("haha", "${networkResult.message}")
+                    //TODO - emit error UI state, listen for the error UI state in the UI do show a error view
                 }
             }
         }
@@ -113,7 +119,10 @@ class PostSharedViewModel : ViewModel() {
                 is NetworkResult.NetworkSuccess<*> -> {
                     val postItem = networkResult.data as PostItem
                     _singlePostUiState.value =
-                        _singlePostUiState.value.copy(title = postItem.title, body = postItem.body)
+                        _singlePostUiState.value.copy(
+                            title = postItem.title,
+                            body = postItem.body
+                        )
                 }
 
                 is NetworkResult.NetworkFailure -> {
@@ -124,9 +133,9 @@ class PostSharedViewModel : ViewModel() {
 
     }
 
-    private fun updateExistingPost(id: Int, postInput: PostInput) {
+    private fun updateExistingPost(id: Int, postItem: PostItem) {
         viewModelScope.launch {
-            postRepository.updatePost(id = id, postInput = postInput)
+            postRepository.updatePost(id = id, postItem = postItem)
         }
     }
 
@@ -134,7 +143,7 @@ class PostSharedViewModel : ViewModel() {
         if (postItem.id != null) {
             updateExistingPost(
                 id = postItem.id,
-                postInput = PostInput(title = postItem.title, body = postItem.body)
+                postItem = PostItem(title = postItem.title, body = postItem.body)
             )
         } else {
             createNewPost()
@@ -157,7 +166,7 @@ class PostSharedViewModel : ViewModel() {
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                   // TODO - show user you have successfully deleted an item UI
+                    // TODO - show user you have successfully deleted an item UI
                 }
 
                 is NetworkResult.NetworkFailure -> {

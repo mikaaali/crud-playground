@@ -36,7 +36,7 @@ import androidx.compose.ui.text.input.ImeAction.Companion.Next
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.mikali.crudplayground.data.network.model.PostItem
+import com.mikali.crudplayground.ui.model.PostItem
 import com.mikali.crudplayground.ui.theme.Yellow
 import com.mikali.crudplayground.viewmodel.PostSharedViewModel
 
@@ -201,6 +201,6 @@ fun PlaceholderBasicTextField(
     }
 }
 
-enum class ButtonClickType{
+enum class ButtonClickType {
     CREATE, UPDATE
 }
