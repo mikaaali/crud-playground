@@ -56,9 +56,9 @@ fun ListScreen(showDialog: MutableState<Boolean>) {
         ListScreen(
             postItems = uiState.value,
             showDialog = showDialog,
-            onPullRefresh = {viewModel.fetchAllPosts()},
+            onPullRefresh = { viewModel.fetchAllPosts() },
             onCardClick = {
-               viewModel.onCardClick(id = it)
+                viewModel.onCardClick(postItem = it)
             }
         )
     }
@@ -69,7 +69,7 @@ fun ListScreen(
     showDialog: MutableState<Boolean>,
     postItems: List<PostItem>,
     onPullRefresh: () -> Unit,
-    onCardClick: (Int) -> Unit,
+    onCardClick: (PostItem) -> Unit,
 ) {
     ListOfLazyCard(
         showDialog = showDialog,
@@ -85,7 +85,7 @@ fun ListOfLazyCard(
     showDialog: MutableState<Boolean>,
     postItems: List<PostItem>,
     onPullRefresh: () -> Unit,
-    onCardClick: (Int) -> Unit,
+    onCardClick: (PostItem) -> Unit,
 ) {
 
     val refreshScope = rememberCoroutineScope()
@@ -123,9 +123,9 @@ fun ListOfLazyCard(
 fun CustomCard(
     postItem: PostItem,
     showDialog: MutableState<Boolean>,
-    onCardClick: (Int) -> Unit
+    onCardClick: (PostItem) -> Unit
 ) {
-    if(!postItem.title.isNullOrEmpty() && !postItem.body.isNullOrEmpty()){
+    if (!postItem.title.isNullOrEmpty() && !postItem.body.isNullOrEmpty()) {
         Card(
             modifier = Modifier
                 .padding(16.dp)
@@ -134,7 +134,7 @@ fun CustomCard(
             shape = RoundedCornerShape(24.dp),
             onClick = {
                 showDialog.value = true
-                postItem.id?.let { onCardClick.invoke(it) }
+                onCardClick.invoke(postItem)
             }
         ) {
             Column(

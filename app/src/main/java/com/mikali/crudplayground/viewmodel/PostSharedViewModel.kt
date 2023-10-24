@@ -1,9 +1,11 @@
 package com.mikali.crudplayground.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mikali.crudplayground.data.network.model.PostItem
 import com.mikali.crudplayground.repository.PostRepository
+import com.mikali.crudplayground.service.NetworkResult
 import com.mikali.crudplayground.ui.model.PostInput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +39,22 @@ class PostSharedViewModel : ViewModel() {
 
     fun createNewPost() {
         viewModelScope.launch {
-            postRepository.createPost(_singlePostUiState.value.title, _singlePostUiState.value.body)
+            val networkResult: NetworkResult = postRepository.createPost(
+                _singlePostUiState.value.title,
+                _singlePostUiState.value.body
+            )
+
+            when (networkResult) {
+                is NetworkResult.NetworkSuccess<*> -> {
+                    val post = networkResult.data as PostItem
+                    //Add this new value to the listScreen
+                    //_postListUiState.value =
+                }
+
+                is NetworkResult.NetworkFailure -> {
+                    Log.d("haha", "${networkResult.message}")
+                }
+            }
         }
     }
     //endregion
@@ -52,8 +69,19 @@ class PostSharedViewModel : ViewModel() {
 
     fun fetchAllPosts() {
         viewModelScope.launch {
-            val posts = postRepository.getAllPosts()
-            _postListUiState.value = posts
+
+            val networkResult: NetworkResult = postRepository.getAllPosts()
+
+            when (networkResult) {
+                is NetworkResult.NetworkSuccess<*> -> {
+                    val posts = networkResult.data as List<PostItem>
+                    _postListUiState.value = posts
+                }
+
+                is NetworkResult.NetworkFailure -> {
+                    Log.d("haha", "${networkResult.message}")
+                }
+            }
         }
     }
 
@@ -79,10 +107,18 @@ class PostSharedViewModel : ViewModel() {
 
     private fun getSinglePost(id: Int) {
         viewModelScope.launch {
-            val postItem = postRepository.getSinglePost(id = id)
-            if (postItem != null) {
-                _singlePostUiState.value =
-                    _singlePostUiState.value.copy(title = postItem.title, body = postItem.body)
+            val networkResult: NetworkResult = postRepository.getSinglePost(id = id)
+
+            when (networkResult) {
+                is NetworkResult.NetworkSuccess<*> -> {
+                    val postItem = networkResult.data as PostItem
+                    _singlePostUiState.value =
+                        _singlePostUiState.value.copy(title = postItem.title, body = postItem.body)
+                }
+
+                is NetworkResult.NetworkFailure -> {
+                    Log.d("haha", "${networkResult.message}")
+                }
             }
         }
 
@@ -96,30 +132,37 @@ class PostSharedViewModel : ViewModel() {
 
     fun onPostButtonClick(postItem: PostItem) {
         if (postItem.id != null) {
-            updateExistingPost(id = postItem.id, postInput = PostInput(title = postItem.title, body = postItem.body))
+            updateExistingPost(
+                id = postItem.id,
+                postInput = PostInput(title = postItem.title, body = postItem.body)
+            )
         } else {
             createNewPost()
         }
     }
 
-    fun onEditButtonClick() {
-        _singlePostUiState.value.id?.let {
+    fun onEditButtonClick(id: Int?) {
+        id?.let {
             getSinglePost(id = it)
         }
     }
 
-    fun onCardClick(id: Int) {
-        _singlePostUiState.value = _singlePostUiState.value.copy(
-            id = id,
-            title = "",
-            body = ""
-        )
+    fun onCardClick(postItem: PostItem) {
+        _singlePostUiState.value = postItem
     }
 
-    fun onDeleteButtonClick() {
+    fun onDeleteButtonClick(id: Int) {
         viewModelScope.launch {
-            _singlePostUiState.value.id?.let {
-                postRepository.deleteSinglePost(id = it)
+            val networkResult: NetworkResult = postRepository.deleteSinglePost(id = id)
+
+            when (networkResult) {
+                is NetworkResult.NetworkSuccess<*> -> {
+                   // TODO - show user you have successfully deleted an item UI
+                }
+
+                is NetworkResult.NetworkFailure -> {
+                    // TODO- show user you cannot delete an item
+                }
             }
         }
     }

@@ -32,6 +32,7 @@ import com.mikali.crudplayground.viewmodel.PostSharedViewModel
 fun CardActionDialog(onDismiss: () -> Unit, navController: NavHostController) {
 
     val viewModel: PostSharedViewModel = viewModel()
+    val singlePostUiState = viewModel.singlePostUiState.collectAsState()
 
     // Grey box fill the entire screen
     Box(
@@ -65,10 +66,14 @@ fun CardActionDialog(onDismiss: () -> Unit, navController: NavHostController) {
                             .clickable {
                                 // handle item click
                                 if (item == "Edit") {
-                                     viewModel.onEditButtonClick()
+                                    viewModel.onEditButtonClick(id = singlePostUiState.value.id)
                                     navController.navigate(route = NavigationScreens.EDIT.name)
                                 } else {
-                                    viewModel.onDeleteButtonClick()
+                                    singlePostUiState.value.id?.let {
+                                        viewModel.onDeleteButtonClick(
+                                            id = it
+                                        )
+                                    }
                                 }
                                 onDismiss()
                             }
