@@ -107,7 +107,7 @@ fun ListOfLazyCard(
         LazyColumn(
             Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             if (!refreshing.value) {
                 items(items = postItems) { cardItem ->

@@ -22,7 +22,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -86,5 +86,13 @@ dependencies {
 
     // androidx.compose.material.pullrefresh
     implementation("androidx.compose.material:material:1.5.4")
+
+    /**
+     * A separate library, androidx.compose.material:material-icons-extended,
+     * contains the full set of Material icons. Due to the very large size of this library,
+     * make sure to use R8/Proguard to strip unused icons if you are including this library
+     * as a direct dependency.
+     */
+    implementation("androidx.compose.material:material-icons-extended:1.6.0-alpha08")
 
 }
