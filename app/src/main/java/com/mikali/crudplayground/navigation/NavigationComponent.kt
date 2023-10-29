@@ -24,7 +24,7 @@ fun StartNavigation() {
     var showListScreenDialog = remember { mutableStateOf(false) }
     var showPhotoScreenDialog = remember { mutableStateOf(false) }
 
-    //TODO-move to viewModel, currently use this to track for icon changes when clicked
+    //TODO-move to viewModel, currently use this to track for icon changes when clicked, also for the bottom navigation bar
     val currentScreen = remember { mutableStateOf(NavigationScreens.LIST) }
 
     Column(

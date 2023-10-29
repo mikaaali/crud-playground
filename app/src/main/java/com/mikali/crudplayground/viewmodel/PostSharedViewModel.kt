@@ -34,6 +34,14 @@ class PostSharedViewModel : ViewModel() {
     )
     val singlePostUiState: StateFlow<PostItem> = _singlePostUiState
 
+    private val _singlePostNetworkRequestStatus = MutableStateFlow(NetworkRequestStatus.IDLE)
+    val singlePostNetworkRequestStatus: StateFlow<NetworkRequestStatus> =
+        _singlePostNetworkRequestStatus
+
+    fun resetNetworkStatus() {
+        _singlePostNetworkRequestStatus.value = NetworkRequestStatus.IDLE
+    }
+
     fun updateTitle(title: String) {
         _singlePostUiState.value = _singlePostUiState.value.copy(title = title)
     }
@@ -52,11 +60,13 @@ class PostSharedViewModel : ViewModel() {
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
                     val post = networkResult.data as PostItem
+                    _singlePostNetworkRequestStatus.value = NetworkRequestStatus.SUCCESS
                     //Add this new value to the listScreen
                     //_postListUiState.value =
                 }
 
                 is NetworkResult.NetworkFailure -> {
+                    _singlePostNetworkRequestStatus.value = NetworkRequestStatus.ERROR
                     Log.d("haha", "${networkResult.message}")
                 }
             }

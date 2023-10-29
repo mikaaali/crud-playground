@@ -1,5 +1,6 @@
 package  com.mikali.crudplayground.ui.edit
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction.Companion.Done
@@ -38,16 +40,45 @@ import androidx.navigation.NavHostController
 import com.mikali.crudplayground.navigation.NavigationScreens
 import com.mikali.crudplayground.ui.model.PostItem
 import com.mikali.crudplayground.ui.theme.Yellow
+import com.mikali.crudplayground.viewmodel.NetworkRequestStatus
 import com.mikali.crudplayground.viewmodel.PostSharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditScreen(currentScreen: MutableState<NavigationScreens>, navController: NavHostController) {
 
+    val focusManager = LocalFocusManager.current
+
     val viewModel: PostSharedViewModel = viewModel()
     val singlePostUiState: State<PostItem> = viewModel.singlePostUiState.collectAsState()
+    val singlePostNetworkStatus: State<NetworkRequestStatus> =
+        viewModel.singlePostNetworkRequestStatus.collectAsState()
 
-    val focusManager = LocalFocusManager.current
+    // observe single post network status and navigate accordingly based on flow result
+    when (singlePostNetworkStatus.value) {
+        NetworkRequestStatus.SUCCESS -> {
+            focusManager.clearFocus()
+            navController.popBackStack()
+            currentScreen.value = NavigationScreens.LIST
+            viewModel.resetNetworkStatus()
+        }
+
+        NetworkRequestStatus.ERROR -> {
+            /**
+             * TODO-better looking error UI, toast auto disappears after sometime,
+             * but other custom UI will not, so reset NetworkRequestStatus to Idle,
+             * otherwise, the UI just retain there, maybe use some animation UI in the future
+             */
+            Toast.makeText(
+                LocalContext.current,
+                "not able to upload a new post to the server",
+                Toast.LENGTH_SHORT
+            ).show()
+            viewModel.resetNetworkStatus()
+        }
+
+        else -> {} // Don't need to do anything for idle, user did not press the post button
+    }
 
     Scaffold(
         topBar = {
@@ -119,24 +150,8 @@ fun EditScreen(currentScreen: MutableState<NavigationScreens>, navController: Na
             }
 
             PostButton(modifier = Modifier.align(Alignment.BottomCenter), // Align to bottom
-                onClick = {
-                    /**
-                     * TODO- better practice, track saving status, Loading, Success, and Error
-                     * help UI know what is happening in the back if we successfully uploaded
-                     * a post or not. note, don't confuse this with uiState for postInput
-                     * don't really need to know postInput success thingamajig, becuase it's
-                     * UI thread update, not on some background thread where we need to handle
-                     * async stuff where background unseen stuff get's blocked etc.
-                     */
-                    viewModel.onPostButtonClick(postItem = singlePostUiState.value)
-                    /**
-                     * the following two line is causing the HTTP FAILED: java.io.IOException: Canceled error
-                     * where we can't post to the server successfully
-                     */
-                    // Close the keyboard and navigate back
-//                focusManager.clearFocus()
-//                navController.popBackStack()
-                })
+                onClick = { viewModel.onPostButtonClick(postItem = singlePostUiState.value) }
+            )
         }
     }
 }
@@ -199,8 +214,4 @@ fun PlaceholderBasicTextField(
             keyboardActions = keyboardActions
         )
     }
-}
-
-enum class ButtonClickType {
-    CREATE, UPDATE
 }
