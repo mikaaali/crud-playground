@@ -60,12 +60,13 @@ class PostSharedViewModel : ViewModel() {
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
                     val post = networkResult.data as PostItem
-                    _singlePostNetworkRequestStatus.value = NetworkRequestStatus.SUCCESS
                     //Add this new value to the listScreen
-                    //_postListUiState.value =
+                    _postListUiState.value = _postListUiState.value + post
+                    _singlePostNetworkRequestStatus.value = NetworkRequestStatus.SUCCESS
                 }
 
                 is NetworkResult.NetworkFailure -> {
+                    //TODO, NetworkRequestStatus should be a sealed class, so error can contain message
                     _singlePostNetworkRequestStatus.value = NetworkRequestStatus.ERROR
                     Log.d("haha", "${networkResult.message}")
                 }
@@ -89,7 +90,7 @@ class PostSharedViewModel : ViewModel() {
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    val posts: List<PostItem> = networkResult.data as List<PostItem>
+                    val posts: List<PostItem> = networkResult.data as List<PostItem> //TODO-unsafe cast, make NetworkResult generic<T>
                     _postListUiState.value = posts
                 }
 

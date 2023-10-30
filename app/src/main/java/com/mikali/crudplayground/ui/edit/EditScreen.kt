@@ -35,7 +35,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction.Companion.Done
 import androidx.compose.ui.text.input.ImeAction.Companion.Next
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.mikali.crudplayground.navigation.NavigationScreens
 import com.mikali.crudplayground.ui.model.PostItem
@@ -45,11 +44,14 @@ import com.mikali.crudplayground.viewmodel.PostSharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditScreen(currentScreen: MutableState<NavigationScreens>, navController: NavHostController) {
+fun EditScreen(
+    viewModel: PostSharedViewModel,
+    currentScreen: MutableState<NavigationScreens>,
+    navController: NavHostController,
+) {
 
     val focusManager = LocalFocusManager.current
 
-    val viewModel: PostSharedViewModel = viewModel()
     val singlePostUiState: State<PostItem> = viewModel.singlePostUiState.collectAsState()
     val singlePostNetworkStatus: State<NetworkRequestStatus> =
         viewModel.singlePostNetworkRequestStatus.collectAsState()

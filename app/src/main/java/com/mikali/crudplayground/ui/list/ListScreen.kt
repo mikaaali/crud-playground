@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikali.crudplayground.R
 import com.mikali.crudplayground.ui.model.PostItem
 import com.mikali.crudplayground.viewmodel.PostSharedViewModel
@@ -39,9 +38,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun ListScreen(showDialog: MutableState<Boolean>) {
+fun ListScreen(
+    viewModel: PostSharedViewModel,
+    showDialog: MutableState<Boolean>,
+) {
 
-    val viewModel: PostSharedViewModel = viewModel()
     val uiState: State<List<PostItem>> = viewModel.postListUiState.collectAsState()
 
     Column(modifier = Modifier.background(Color.LightGray.copy(alpha = 0.3f))) {
@@ -91,8 +92,7 @@ fun ListOfLazyCard(
 ) {
 
     val refreshScope = rememberCoroutineScope()
-    var refreshing = remember { mutableStateOf(false) }
-
+    val refreshing = remember { mutableStateOf(false) }
 
     fun refresh() = refreshScope.launch {
         refreshing.value = true
