@@ -1,23 +1,23 @@
 package com.mikali.crudplayground.ui.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -25,145 +25,133 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.mikali.crudplayground.R
-import com.mikali.crudplayground.model.PostItem
-import com.mikali.crudplayground.navigation.NavigationScreens
-import com.mikali.crudplayground.ui.theme.Yellow
-import com.mikali.crudplayground.viewmodel.ListScreenViewModel
+import com.mikali.crudplayground.ui.model.PostItem
+import com.mikali.crudplayground.viewmodel.PostSharedViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun ListScreen(navController: NavHostController) {
+fun ListScreen(
+    viewModel: PostSharedViewModel,
+    showDialog: MutableState<Boolean>,
+) {
 
-    val listScreenViewModel: ListScreenViewModel = viewModel()
-    val uiState: State<List<PostItem>> = listScreenViewModel.myPost.collectAsState()
+    val uiState: State<List<PostItem>> = viewModel.postListUiState.collectAsState()
 
-    //TODO-move to viewModel
-    var showDialog = remember { mutableStateOf(false) }
-
-    Scaffold(
-        topBar = {
-            Column {
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    text = stringResource(R.string.crud_playground),
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = stringResource(R.string.description),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+    Column(modifier = Modifier.background(Color.LightGray.copy(alpha = 0.3f))) {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            text = stringResource(R.string.crud_playground),
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = stringResource(R.string.description),
+            style = MaterialTheme.typography.bodyMedium
+        )
+        ListScreen(
+            postItems = uiState.value,
+            showDialog = showDialog,
+            onPullRefresh = { viewModel.fetchAllPosts() },
+            onCardClick = {
+                viewModel.onCardClick(postItem = it)
             }
-
-        },
-        bottomBar = {},
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate(route = NavigationScreens.EDIT.name) },
-                shape = RoundedCornerShape(size = 16.dp),
-                containerColor = Yellow //TODO-why is dynamic theme not working??
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-            }
-        },
-        content = {
-            ListScreen(postItems = uiState.value, showDialog = showDialog, paddingValues = it)
-        }
-    )
-
-    // Show Dialog on Card Click
-    if (showDialog.value) {
-        CardActionDialog(onDismiss = { showDialog.value = false }, navController = navController)
+        )
     }
 }
 
 @Composable
 fun ListScreen(
     showDialog: MutableState<Boolean>,
-    paddingValues: PaddingValues,
     postItems: List<PostItem>,
+    onPullRefresh: () -> Unit,
+    onCardClick: (PostItem) -> Unit,
 ) {
-
-    ListOfLazyCard(showDialog = showDialog, paddingValues = paddingValues, postItems = postItems)
-
+    ListOfLazyCard(
+        showDialog = showDialog,
+        postItems = postItems,
+        onPullRefresh = onPullRefresh,
+        onCardClick = onCardClick
+    )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ListOfLazyCard(
     showDialog: MutableState<Boolean>,
-    paddingValues: PaddingValues,
     postItems: List<PostItem>,
+    onPullRefresh: () -> Unit,
+    onCardClick: (PostItem) -> Unit,
 ) {
-    LazyColumn(modifier = Modifier.padding(paddingValues = paddingValues)) {
-        items(items = postItems) { cardItem ->
-            CustomCard(
-                showDialog = showDialog,
-                title = cardItem.title,
-                imageUrl = cardItem.image_url,
-                body = cardItem.body,
-            )
+
+    val refreshScope = rememberCoroutineScope()
+    val refreshing = remember { mutableStateOf(false) }
+
+    fun refresh() = refreshScope.launch {
+        refreshing.value = true
+        delay(1500)
+        onPullRefresh.invoke()
+        refreshing.value = false
+    }
+
+    val refreshState = rememberPullRefreshState(refreshing.value, ::refresh)
+
+    Box(Modifier.pullRefresh(refreshState)) {
+        LazyColumn(
+            Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            if (!refreshing.value) {
+                items(items = postItems) { cardItem ->
+                    CustomCard(
+                        showDialog = showDialog,
+                        postItem = cardItem,
+                        onCardClick = onCardClick
+                    )
+                }
+            }
         }
+
+        PullRefreshIndicator(refreshing.value, refreshState, Modifier.align(Alignment.TopCenter))
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomCard(
-    title: String,
-    body: String,
-    imageUrl: String,
-    showDialog: MutableState<Boolean>
+    postItem: PostItem,
+    showDialog: MutableState<Boolean>,
+    onCardClick: (PostItem) -> Unit
 ) {
+
     Card(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .height(280.dp), // specify the height of your card
-        shape = RoundedCornerShape(24.dp),
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         onClick = {
             showDialog.value = true
+            onCardClick.invoke(postItem)
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
-
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageUrl)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(R.drawable.ic_launcher_background),
-                contentDescription = stringResource(R.string.imageDescription),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .weight(2f) // takes 2/3 of the space
-                    .fillMaxWidth()
-                    .clip(shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+            Text(
+                text = postItem.title.orEmpty(),
+                style = MaterialTheme.typography.titleLarge,
             )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = Color.White)
-                    .weight(1f) // takes 1/3 of the space
-                    .padding(8.dp)
-            ) {
-                Text(text = title, style = MaterialTheme.typography.titleMedium)
-                Text(text = body, style = MaterialTheme.typography.bodySmall)
-            }
+            Text(text = postItem.body.orEmpty(), style = MaterialTheme.typography.bodySmall)
         }
     }
+
+
 }

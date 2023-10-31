@@ -3,4 +3,6 @@
     <string name="imageDescription">I need to be an image description, todoooooooo</string>
     <string name="crud_playground">CRUD Playground</string>
     <string name="description">Description</string>
+    <string name="no_internet_connection">no internet connection</string>
+    <string name="http_request_error">http request error\n</string>
 </resources>
