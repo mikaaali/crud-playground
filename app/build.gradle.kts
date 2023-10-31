@@ -22,7 +22,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -83,16 +83,5 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     // logging interceptor
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
-
-    // androidx.compose.material.pullrefresh
-    implementation("androidx.compose.material:material:1.5.4")
-
-    /**
-     * A separate library, androidx.compose.material:material-icons-extended,
-     * contains the full set of Material icons. Due to the very large size of this library,
-     * make sure to use R8/Proguard to strip unused icons if you are including this library
-     * as a direct dependency.
-     */
-    implementation("androidx.compose.material:material-icons-extended:1.6.0-alpha08")
 
 }

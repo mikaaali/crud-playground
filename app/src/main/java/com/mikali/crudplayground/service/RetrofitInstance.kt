@@ -13,7 +13,7 @@ object RetrofitInstance {
      *
      * include base url is ok in the entire http method calls, but too duplicated, not clean
      */
-    private const val BASE_URL = "https://dk44n7ll-3000.usw3.devtunnels.ms/"
+    private const val BASE_URL = "https://kqq8fq6m-3000.usw2.devtunnels.ms/"
 
     //Add this for logging, so we can view it inside the logcat
     private val client = OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().apply {
@@ -23,7 +23,7 @@ object RetrofitInstance {
     val instance: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())  //retrofit won't know how to convert the http response body into your desired data type, if you don't add a converterFactory, other converter factory (ex.moshi)
+            .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
     }
