@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.image
+package com.mikali.crudplayground.ui.photos
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,13 +24,12 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.mikali.crudplayground.R
 import com.mikali.crudplayground.data.network.model.ImageItem
-import com.mikali.crudplayground.viewmodel.ImageScreenViewModel
 
 @Composable
-fun ImageScreen(showDialog: MutableState<Boolean>) {
+fun PhotosScreen(showDialog: MutableState<Boolean>) {
 
-    val imageScreenViewModel: ImageScreenViewModel = viewModel()
-    val uiState: State<List<ImageItem>> = imageScreenViewModel.images.collectAsState()
+    val photosScreenViewModel: PhotosScreenViewModel = viewModel()
+    val uiState: State<List<ImageItem>> = photosScreenViewModel.images.collectAsState()
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2), // Number of columns

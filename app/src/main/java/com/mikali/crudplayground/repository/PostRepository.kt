@@ -5,9 +5,9 @@ import com.mikali.crudplayground.data.network.model.PostItemResponse
 import com.mikali.crudplayground.service.NetworkResult
 import com.mikali.crudplayground.service.PostApiService
 import com.mikali.crudplayground.service.RetrofitInstance
-import com.mikali.crudplayground.ui.mapper.toPostItem
-import com.mikali.crudplayground.ui.mapper.toPostItemResponse
-import com.mikali.crudplayground.ui.model.PostItem
+import com.mikali.crudplayground.ui.post.mapper.toPostItem
+import com.mikali.crudplayground.ui.post.mapper.toPostItemResponse
+import com.mikali.crudplayground.ui.post.model.PostItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response

@@ -90,8 +90,8 @@ fun CustomBottomAppBar(
                         } else {
                             val iconSize = 30.dp
                             val icon = when (screen) {
-                                NavigationScreens.LIST -> if (currentScreen.value == screen) Icons.Filled.Summarize else Icons.Outlined.Summarize
-                                NavigationScreens.IMAGE -> if (currentScreen.value == screen) Icons.Filled.PhotoLibrary else Icons.Outlined.PhotoLibrary
+                                NavigationScreens.POSTS -> if (currentScreen.value == screen) Icons.Filled.Summarize else Icons.Outlined.Summarize
+                                NavigationScreens.PHOTOS -> if (currentScreen.value == screen) Icons.Filled.PhotoLibrary else Icons.Outlined.PhotoLibrary
                                 else -> null
                             }
 
@@ -105,8 +105,8 @@ fun CustomBottomAppBar(
 
                             // Add text only for LIST and IMAGE
                             when (screen) {
-                                NavigationScreens.LIST -> Text("List")
-                                NavigationScreens.IMAGE -> Text("Image")
+                                NavigationScreens.POSTS -> Text("Posts")
+                                NavigationScreens.PHOTOS -> Text("Photos")
                                 else -> {}
                             }
                         }

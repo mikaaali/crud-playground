@@ -1,11 +1,12 @@
-package com.mikali.crudplayground.viewmodel
+package com.mikali.crudplayground.ui.post.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mikali.crudplayground.repository.PostRepository
 import com.mikali.crudplayground.service.NetworkResult
-import com.mikali.crudplayground.ui.model.PostItem
+import com.mikali.crudplayground.ui.post.PostCreationEvent
+import com.mikali.crudplayground.ui.post.model.PostItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -34,12 +35,12 @@ class PostSharedViewModel : ViewModel() {
     )
     val singlePostUiState: StateFlow<PostItem> = _singlePostUiState
 
-    private val _singlePostNetworkRequestStatus = MutableStateFlow(NetworkRequestStatus.IDLE)
-    val singlePostNetworkRequestStatus: StateFlow<NetworkRequestStatus> =
-        _singlePostNetworkRequestStatus
+    private val _singlePostPostCreationEvent = MutableStateFlow(PostCreationEvent.IDLE)
+    val singlePostPostCreationEvent: StateFlow<PostCreationEvent> =
+        _singlePostPostCreationEvent
 
     fun resetNetworkStatus() {
-        _singlePostNetworkRequestStatus.value = NetworkRequestStatus.IDLE
+        _singlePostPostCreationEvent.value = PostCreationEvent.IDLE
     }
 
     fun updateTitle(title: String) {
@@ -62,12 +63,12 @@ class PostSharedViewModel : ViewModel() {
                     val post = networkResult.data as PostItem
                     //Add this new value to the listScreen
                     _postListUiState.value = _postListUiState.value + post
-                    _singlePostNetworkRequestStatus.value = NetworkRequestStatus.SUCCESS
+                    _singlePostPostCreationEvent.value = PostCreationEvent.SUCCESS
                 }
 
                 is NetworkResult.NetworkFailure -> {
                     //TODO, NetworkRequestStatus should be a sealed class, so error can contain message
-                    _singlePostNetworkRequestStatus.value = NetworkRequestStatus.ERROR
+                    _singlePostPostCreationEvent.value = PostCreationEvent.ERROR
                     Log.d("haha", "${networkResult.message}")
                 }
             }

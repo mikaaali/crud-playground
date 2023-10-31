@@ -1,7 +1,7 @@
 package com.mikali.crudplayground.navigation
 
 enum class NavigationScreens {
-    LIST,
+    POSTS,
     EDIT,
-    IMAGE,
+    PHOTOS,
 }

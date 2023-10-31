@@ -13,11 +13,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mikali.crudplayground.ui.CustomBottomAppBar
-import com.mikali.crudplayground.ui.common.CardActionDialog
-import com.mikali.crudplayground.ui.edit.EditScreen
-import com.mikali.crudplayground.ui.image.ImageScreen
-import com.mikali.crudplayground.ui.list.ListScreen
-import com.mikali.crudplayground.viewmodel.PostSharedViewModel
+import com.mikali.crudplayground.ui.components.CardInteractionDialog
+import com.mikali.crudplayground.ui.photos.PhotosScreen
+import com.mikali.crudplayground.ui.post.PostEditScreen
+import com.mikali.crudplayground.ui.post.PostListScreen
+import com.mikali.crudplayground.ui.post.viewmodel.PostSharedViewModel
 
 @Composable
 fun StartNavigation() {
@@ -28,7 +28,7 @@ fun StartNavigation() {
     val showPhotoScreenDialog = remember { mutableStateOf(false) }
 
     //TODO-move to viewModel, currently use this to track for icon changes when clicked, also for the bottom navigation bar
-    val currentScreen = remember { mutableStateOf(NavigationScreens.LIST) }
+    val currentScreen = remember { mutableStateOf(NavigationScreens.POSTS) }
 
     /**
      * TODO: I had to do this because ListScreen and EditScreen's viewModel.hashCode() are different
@@ -51,30 +51,30 @@ fun StartNavigation() {
             // nav host holds all of the composable screens
             NavHost(
                 navController = navController,
-                startDestination = NavigationScreens.LIST.name
+                startDestination = NavigationScreens.POSTS.name
             ) {
-                composable(route = NavigationScreens.LIST.name) {
-                    ListScreen(
+                composable(route = NavigationScreens.POSTS.name) {
+                    PostListScreen(
                         viewModel = postSharedViewModel,
                         showDialog = showListScreenDialog,
                     )
                 }
                 composable(route = NavigationScreens.EDIT.name) {
-                    EditScreen(
+                    PostEditScreen(
                         viewModel = postSharedViewModel,
                         currentScreen = currentScreen,
                         navController = navController,
                     )
                 }
-                composable(route = NavigationScreens.IMAGE.name) {
-                    ImageScreen(
+                composable(route = NavigationScreens.PHOTOS.name) {
+                    PhotosScreen(
                         showDialog = showPhotoScreenDialog
                     )
                 }
             }
 
             if (showPhotoScreenDialog.value) {
-                CardActionDialog(
+                CardInteractionDialog(
                     items = listOf("Download", "Some other action"),
                     currentScreen = currentScreen,
                     onDismiss = { showPhotoScreenDialog.value = false },
@@ -84,7 +84,7 @@ fun StartNavigation() {
 
             // Show Dialog on Card Click
             if (showListScreenDialog.value) {
-                CardActionDialog(
+                CardInteractionDialog(
                     items = listOf("Edit", "Delete"),
                     currentScreen = currentScreen,
                     onDismiss = { showListScreenDialog.value = false },

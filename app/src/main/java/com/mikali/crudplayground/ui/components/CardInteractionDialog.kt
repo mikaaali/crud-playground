@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.common
+package com.mikali.crudplayground.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,10 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.mikali.crudplayground.navigation.NavigationScreens
-import com.mikali.crudplayground.viewmodel.PostSharedViewModel
+import com.mikali.crudplayground.ui.post.viewmodel.PostSharedViewModel
 
 @Composable
-fun CardActionDialog(
+fun CardInteractionDialog(
     items: List<String>,
     currentScreen: MutableState<NavigationScreens>,
     onDismiss: () -> Unit,

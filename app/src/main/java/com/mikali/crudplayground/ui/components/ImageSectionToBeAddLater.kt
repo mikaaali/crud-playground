@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.edit
+package com.mikali.crudplayground.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

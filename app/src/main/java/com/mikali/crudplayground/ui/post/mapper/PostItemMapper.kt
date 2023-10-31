@@ -1,7 +1,7 @@
-package com.mikali.crudplayground.ui.mapper
+package com.mikali.crudplayground.ui.post.mapper
 
 import com.mikali.crudplayground.data.network.model.PostItemResponse
-import com.mikali.crudplayground.ui.model.PostItem
+import com.mikali.crudplayground.ui.post.model.PostItem
 
 fun PostItemResponse.toPostItem(): PostItem =
     PostItem(
