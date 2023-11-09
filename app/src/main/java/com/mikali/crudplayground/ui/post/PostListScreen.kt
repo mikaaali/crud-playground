@@ -31,6 +31,7 @@ import com.mikali.crudplayground.navigation.NavigationViewModel
 import com.mikali.crudplayground.ui.components.TitleBodyCard
 import com.mikali.crudplayground.ui.post.model.PostItem
 import com.mikali.crudplayground.ui.post.viewmodel.PostSharedViewModel
+import com.mikali.crudplayground.ui.theme.appBackgroundColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -42,7 +43,7 @@ fun PostListScreen(
 
     val uiState: State<List<PostItem>> = postSharedViewModel.postListUiState.collectAsState()
 
-    Column(modifier = Modifier.background(Color.LightGray.copy(alpha = 0.3f))) {
+    Column(modifier = Modifier.background(appBackgroundColor)) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             text = stringResource(R.string.crud_playground),

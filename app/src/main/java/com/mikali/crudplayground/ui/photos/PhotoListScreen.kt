@@ -1,5 +1,6 @@
 package com.mikali.crudplayground.ui.photos
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -24,16 +26,18 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.mikali.crudplayground.R
 import com.mikali.crudplayground.data.network.model.ImageItem
+import com.mikali.crudplayground.ui.theme.appBackgroundColor
 
 @Composable
-fun PhotosScreen(showDialog: MutableState<Boolean>) {
+fun PhotoListScreen(showDialog: MutableState<Boolean>) {
 
     val photosScreenViewModel: PhotosScreenViewModel = viewModel()
     val uiState: State<List<ImageItem>> = photosScreenViewModel.images.collectAsState()
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2), // Number of columns
-        contentPadding = PaddingValues(8.dp) // Padding around the grid
+        contentPadding = PaddingValues(8.dp), // Padding around the grid
+        modifier = Modifier.background(appBackgroundColor)
     ) {
         items(uiState.value) {
             AsyncImage(

@@ -14,7 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mikali.crudplayground.ui.CustomBottomAppBar
 import com.mikali.crudplayground.ui.components.CardInteractionDialog
-import com.mikali.crudplayground.ui.photos.PhotosScreen
+import com.mikali.crudplayground.ui.photos.PhotoListScreen
 import com.mikali.crudplayground.ui.post.PostEditScreen
 import com.mikali.crudplayground.ui.post.PostListScreen
 import com.mikali.crudplayground.ui.post.viewmodel.PostSharedViewModel
@@ -70,7 +70,7 @@ fun StartNavigation() {
                     )
                 }
                 composable(route = NavigationScreens.PHOTOS.name) {
-                    PhotosScreen(
+                    PhotoListScreen(
                         showDialog = showPhotoScreenDialog
                     )
                 }
