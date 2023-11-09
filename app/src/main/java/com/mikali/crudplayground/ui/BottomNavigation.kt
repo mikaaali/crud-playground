@@ -34,6 +34,7 @@ import com.mikali.crudplayground.ui.theme.Yellow
 fun CustomBottomAppBar(
     currentScreen: MutableState<NavigationScreens>,
     navController: NavController,
+    onCreateClick: () -> Unit,
 ) {
     BottomAppBar {
 
@@ -73,6 +74,7 @@ fun CustomBottomAppBar(
                                         currentScreen.value = screen
 
                                         if (screen == NavigationScreens.EDIT) {
+                                            onCreateClick.invoke()
                                             popUpTo(navController.graph.startDestinationId)
                                         }
 

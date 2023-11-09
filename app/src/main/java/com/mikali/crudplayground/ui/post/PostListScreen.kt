@@ -16,7 +16,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mikali.crudplayground.R
+import com.mikali.crudplayground.navigation.NavigationViewModel
 import com.mikali.crudplayground.ui.components.TitleBodyCard
 import com.mikali.crudplayground.ui.post.model.PostItem
 import com.mikali.crudplayground.ui.post.viewmodel.PostSharedViewModel
@@ -36,11 +36,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun PostListScreen(
-    viewModel: PostSharedViewModel,
-    showDialog: MutableState<Boolean>,
+    postSharedViewModel: PostSharedViewModel,
+    navigationViewModel: NavigationViewModel,
 ) {
 
-    val uiState: State<List<PostItem>> = viewModel.postListUiState.collectAsState()
+    val uiState: State<List<PostItem>> = postSharedViewModel.postListUiState.collectAsState()
 
     Column(modifier = Modifier.background(Color.LightGray.copy(alpha = 0.3f))) {
         Text(
@@ -55,10 +55,10 @@ fun PostListScreen(
         )
         ListOfLazyCard(
             postItems = uiState.value,
-            showDialog = showDialog,
-            onPullRefresh = { viewModel.fetchAllPosts() },
+            onPullRefresh = { postSharedViewModel.fetchAllPosts() },
             onCardClick = {
-                viewModel.onCardClick(postItem = it)
+                navigationViewModel.setShowListScreenDialog(show = true)
+                postSharedViewModel.setCurrentSelectSinglePostItem(postItem = it)
             }
         )
     }
@@ -67,7 +67,6 @@ fun PostListScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ListOfLazyCard(
-    showDialog: MutableState<Boolean>,
     postItems: List<PostItem>,
     onPullRefresh: () -> Unit,
     onCardClick: (PostItem) -> Unit,
@@ -94,7 +93,6 @@ fun ListOfLazyCard(
             if (!refreshing.value) {
                 items(items = postItems) { cardItem ->
                     TitleBodyCard(
-                        showDialog = showDialog,
                         postItem = cardItem,
                         onCardClick = onCardClick
                     )

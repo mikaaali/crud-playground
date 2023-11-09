@@ -3,6 +3,7 @@ package com.mikali.crudplayground.ui.post.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mikali.crudplayground.navigation.EditMode
 import com.mikali.crudplayground.repository.PostRepository
 import com.mikali.crudplayground.service.NetworkResult
 import com.mikali.crudplayground.ui.post.PostCreationEvent
@@ -35,12 +36,11 @@ class PostSharedViewModel : ViewModel() {
     )
     val singlePostUiState: StateFlow<PostItem> = _singlePostUiState
 
-    private val _singlePostPostCreationEvent = MutableStateFlow(PostCreationEvent.IDLE)
-    val singlePostPostCreationEvent: StateFlow<PostCreationEvent> =
-        _singlePostPostCreationEvent
+    private val _singlePostCreationEvent = MutableStateFlow(PostCreationEvent.IDLE)
+    val singlePostCreationEvent: StateFlow<PostCreationEvent> = _singlePostCreationEvent
 
     fun resetNetworkStatus() {
-        _singlePostPostCreationEvent.value = PostCreationEvent.IDLE
+        _singlePostCreationEvent.value = PostCreationEvent.IDLE
     }
 
     fun updateTitle(title: String) {
@@ -63,16 +63,26 @@ class PostSharedViewModel : ViewModel() {
                     val post = networkResult.data as PostItem
                     //Add this new value to the listScreen
                     _postListUiState.value = _postListUiState.value + post
-                    _singlePostPostCreationEvent.value = PostCreationEvent.SUCCESS
+                    _singlePostCreationEvent.value = PostCreationEvent.SUCCESS
+                    //clear edit screen
+                    _singlePostUiState.value = PostItem(
+                        id = null,
+                        title = null,
+                        body = null,
+                    )
                 }
 
                 is NetworkResult.NetworkFailure -> {
                     //TODO, NetworkRequestStatus should be a sealed class, so error can contain message
-                    _singlePostPostCreationEvent.value = PostCreationEvent.ERROR
+                    _singlePostCreationEvent.value = PostCreationEvent.ERROR
                     Log.d("haha", "${networkResult.message}")
                 }
             }
         }
+    }
+
+    fun clearSinglePostUiState() {
+        _singlePostUiState.value = PostItem.Empty
     }
     //endregion
 
@@ -91,7 +101,8 @@ class PostSharedViewModel : ViewModel() {
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    val posts: List<PostItem> = networkResult.data as List<PostItem> //TODO-unsafe cast, make NetworkResult generic<T>
+                    val posts: List<PostItem> =
+                        networkResult.data as List<PostItem> //TODO-unsafe cast, make NetworkResult generic<T>
                     _postListUiState.value = posts
                 }
 
@@ -102,25 +113,6 @@ class PostSharedViewModel : ViewModel() {
             }
         }
     }
-
-
-    //Asynchronous execution using enqueue and callbacks.
-    /*    private fun fetchAllPosts() {
-            viewModelScope.launch {
-                postRepository.getAllPosts() { fetchedPosts, err ->
-                    if (fetchedPosts != null) {
-                        */
-    /**
-     * Using a sealed class can be a more idiomatic way to represent either
-     * a successful result or an error, instead of two separate instances of StateFlow
-     *//*
-                    _posts.value = fetchedPosts
-                } else if (err != null) {
-                    _error.value = err
-                }
-            }
-        }
-    }*/
     //endregion
 
     private fun getSinglePost(id: Int) {
@@ -147,19 +139,46 @@ class PostSharedViewModel : ViewModel() {
 
     private fun updateExistingPost(id: Int, postItem: PostItem) {
         viewModelScope.launch {
-            postRepository.updatePost(id = id, postItem = postItem)
+            val networkResult: NetworkResult =
+                postRepository.updatePost(id = id, postItem = postItem)
+
+            when (networkResult) {
+                is NetworkResult.NetworkSuccess<*> -> {
+                    // network call returns the updated post object
+                    val updatedPost = networkResult.data as PostItem
+                    // Replace the existing value in the list
+                    _postListUiState.value = _postListUiState.value.map { existingPost ->
+                        if (existingPost.id == updatedPost.id) updatedPost else existingPost
+                    }
+                    _singlePostCreationEvent.value = PostCreationEvent.SUCCESS
+                    // Update the edit screen to show the updated post
+                    _singlePostUiState.value = updatedPost
+                }
+
+                is NetworkResult.NetworkFailure -> {
+                    _singlePostCreationEvent.value = PostCreationEvent.ERROR
+                    Log.e("ViewModel", "Error updating post: ${networkResult.message}")
+                }
+            }
         }
     }
 
-    fun onPostButtonClick(postItem: PostItem) {
-        if (postItem.id != null) {
-            updateExistingPost(
-                id = postItem.id,
-                postItem = PostItem(title = postItem.title, body = postItem.body)
-            )
-        } else {
-            createNewPost()
+    fun onPostButtonClick(editMode: EditMode, postItem: PostItem) {
+        when (editMode) {
+            EditMode.CREATE -> {
+                createNewPost()
+            }
+
+            EditMode.EDIT -> {
+                postItem.id?.let {
+                    updateExistingPost(
+                        id = it,
+                        postItem = PostItem(title = postItem.title, body = postItem.body)
+                    )
+                }
+            }
         }
+
     }
 
     fun onEditButtonClick(id: Int?) {
@@ -168,7 +187,7 @@ class PostSharedViewModel : ViewModel() {
         }
     }
 
-    fun onCardClick(postItem: PostItem) {
+    fun setCurrentSelectSinglePostItem(postItem: PostItem) {
         _singlePostUiState.value = postItem
     }
 
@@ -178,14 +197,41 @@ class PostSharedViewModel : ViewModel() {
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    // TODO - show user you have successfully deleted an item UI
+                    println("hahaha _postListUiState: ${_postListUiState.value}")
+                    println("hahahaid: $id")
+                    // Remove the post with the matching id from the list
+                    val newList: List<PostItem> = _postListUiState.value.filterNot { it.id == id }
+                    // Update the UI state with the new list
+                    _postListUiState.value = newList
+
+
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    // TODO- show user you cannot delete an item
+                    // TODO- show user you cannot delete an item, setup an event first,
+                    // then listen for the event in the UI, and show the error UI
+
                 }
             }
         }
     }
 
+
+    //Asynchronous execution using enqueue and callbacks.
+    /*    private fun fetchAllPosts() {
+            viewModelScope.launch {
+                postRepository.getAllPosts() { fetchedPosts, err ->
+                    if (fetchedPosts != null) {
+                        */
+    /**
+     * Using a sealed class can be a more idiomatic way to represent either
+     * a successful result or an error, instead of two separate instances of StateFlow
+     *//*
+                    _posts.value = fetchedPosts
+                } else if (err != null) {
+                    _error.value = err
+                }
+            }
+        }
+    }*/
 }

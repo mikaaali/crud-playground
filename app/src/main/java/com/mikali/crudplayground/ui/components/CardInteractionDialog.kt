@@ -33,13 +33,14 @@ import com.mikali.crudplayground.ui.post.viewmodel.PostSharedViewModel
 @Composable
 fun CardInteractionDialog(
     items: List<String>,
+    onEditClick: () -> Unit,
     currentScreen: MutableState<NavigationScreens>,
     onDismiss: () -> Unit,
     navController: NavHostController,
 ) {
 
-    val viewModel: PostSharedViewModel = viewModel()
-    val singlePostUiState = viewModel.singlePostUiState.collectAsState()
+    val postSharedViewModel: PostSharedViewModel = viewModel()
+    val singlePostUiState = postSharedViewModel.singlePostUiState.collectAsState()
 
     // Grey box fill the entire screen
     Box(
@@ -69,18 +70,25 @@ fun CardInteractionDialog(
                             .fillMaxWidth()
                             .clickable {
                                 // handle item click
-                                if (item == "Edit") {
-                                    viewModel.onEditButtonClick(id = singlePostUiState.value.id)
-                                    navController.navigate(route = NavigationScreens.EDIT.name)
-                                    currentScreen.value = NavigationScreens.EDIT
-                                } else {
-                                    singlePostUiState.value.id?.let {
-                                        viewModel.onDeleteButtonClick(
-                                            id = it
-                                        )
+                                when (item) {
+                                    "Edit" -> {
+                                        onDismiss()
+                                        postSharedViewModel.onEditButtonClick(id = singlePostUiState.value.id)
+                                        navController.navigate(route = NavigationScreens.EDIT.name) {
+                                            onEditClick.invoke()
+                                        }
+                                        currentScreen.value = NavigationScreens.EDIT
+                                    }
+
+                                    "Delete" -> {
+                                        onDismiss()
+                                        singlePostUiState.value.id?.let {
+                                            postSharedViewModel.onDeleteButtonClick(
+                                                id = it
+                                            )
+                                        }
                                     }
                                 }
-                                onDismiss()
                             }
                             .padding(vertical = 16.dp)
                     ) {

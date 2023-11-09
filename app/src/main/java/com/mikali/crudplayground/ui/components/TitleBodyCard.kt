@@ -9,7 +9,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -19,7 +18,6 @@ import com.mikali.crudplayground.ui.post.model.PostItem
 @Composable
 fun TitleBodyCard(
     postItem: PostItem,
-    showDialog: MutableState<Boolean>,
     onCardClick: (PostItem) -> Unit
 ) {
 
@@ -27,7 +25,6 @@ fun TitleBodyCard(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         onClick = {
-            showDialog.value = true
             onCardClick.invoke(postItem)
         }
     ) {

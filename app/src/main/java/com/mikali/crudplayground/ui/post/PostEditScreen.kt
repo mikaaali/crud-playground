@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.ImeAction.Companion.Done
 import androidx.compose.ui.text.input.ImeAction.Companion.Next
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mikali.crudplayground.navigation.EditMode
 import com.mikali.crudplayground.navigation.NavigationScreens
 import com.mikali.crudplayground.ui.components.BasicTextFieldWithPlaceholder
 import com.mikali.crudplayground.ui.components.TextButton
@@ -34,24 +35,27 @@ import com.mikali.crudplayground.ui.post.viewmodel.PostSharedViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostEditScreen(
-    viewModel: PostSharedViewModel,
+    editMode: EditMode,
+    postSharedViewModel: PostSharedViewModel,
     currentScreen: MutableState<NavigationScreens>,
     navController: NavHostController,
 ) {
 
     val focusManager = LocalFocusManager.current
 
-    val singlePostUiState: State<PostItem> = viewModel.singlePostUiState.collectAsState()
+    val singlePostUiState: State<PostItem> = postSharedViewModel.singlePostUiState.collectAsState()
     val singlePostNetworkStatus: State<PostCreationEvent> =
-        viewModel.singlePostPostCreationEvent.collectAsState()
+        postSharedViewModel.singlePostCreationEvent.collectAsState()
 
     // observe single post network status and navigate accordingly based on flow result
+    // previously, we tried to call pop back and create/update a post in a non-blocking manner
+    // so network request to POST/PATCH keeps getting interrupted
     when (singlePostNetworkStatus.value) {
         PostCreationEvent.SUCCESS -> {
             focusManager.clearFocus()
             navController.popBackStack()
             currentScreen.value = NavigationScreens.POSTS
-            viewModel.resetNetworkStatus()
+            postSharedViewModel.resetNetworkStatus()
         }
 
         PostCreationEvent.ERROR -> {
@@ -65,10 +69,15 @@ fun PostEditScreen(
                 "not able to upload a new post to the server",
                 Toast.LENGTH_SHORT
             ).show()
-            viewModel.resetNetworkStatus()
+            postSharedViewModel.resetNetworkStatus()
         }
 
         else -> {} // Don't need to do anything for idle, user did not press the post button
+    }
+
+    // Setup for create/edit mode
+    if (editMode == EditMode.CREATE) {
+        postSharedViewModel.clearSinglePostUiState()
     }
 
     Scaffold(
@@ -90,7 +99,7 @@ fun PostEditScreen(
                 BasicTextFieldWithPlaceholder(
                     value = singlePostUiState.value.title ?: "",
                     onValueChange = { keyboardInput ->
-                        viewModel.updateTitle(keyboardInput)
+                        postSharedViewModel.updateTitle(keyboardInput)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -109,7 +118,7 @@ fun PostEditScreen(
                 BasicTextFieldWithPlaceholder(
                     value = singlePostUiState.value.body ?: "",
                     onValueChange = { keyboardInput ->
-                        viewModel.updateBody(keyboardInput)
+                        postSharedViewModel.updateBody(keyboardInput)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -126,7 +135,9 @@ fun PostEditScreen(
             }
 
             TextButton(modifier = Modifier.align(Alignment.BottomCenter), // Align to bottom
-                onClick = { viewModel.onPostButtonClick(postItem = singlePostUiState.value) }
+                onClick = {
+                    postSharedViewModel.onPostButtonClick(editMode = editMode, postItem = singlePostUiState.value)
+                }
             )
         }
     }
