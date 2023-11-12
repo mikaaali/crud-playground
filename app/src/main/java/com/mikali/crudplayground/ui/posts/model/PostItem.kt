@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.post.model
+package com.mikali.crudplayground.ui.posts.model
 
 /**
  * Better practice to have separate model for network response vs UI state,

@@ -1,13 +1,13 @@
-package com.mikali.crudplayground.ui.post.viewmodel
+package com.mikali.crudplayground.ui.posts.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mikali.crudplayground.navigation.EditMode
 import com.mikali.crudplayground.repository.PostRepository
 import com.mikali.crudplayground.service.NetworkResult
-import com.mikali.crudplayground.ui.post.PostCreationEvent
-import com.mikali.crudplayground.ui.post.model.PostItem
+import com.mikali.crudplayground.ui.posts.enums.EditMode
+import com.mikali.crudplayground.ui.posts.enums.SinglePostNetworkStatus
+import com.mikali.crudplayground.ui.posts.model.PostItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -36,11 +36,12 @@ class PostSharedViewModel : ViewModel() {
     )
     val singlePostUiState: StateFlow<PostItem> = _singlePostUiState
 
-    private val _singlePostCreationEvent = MutableStateFlow(PostCreationEvent.IDLE)
-    val singlePostCreationEvent: StateFlow<PostCreationEvent> = _singlePostCreationEvent
+    private val _singleSinglePostNetworkStatus = MutableStateFlow(SinglePostNetworkStatus.IDLE)
+    val singleSinglePostNetworkStatus: StateFlow<SinglePostNetworkStatus> =
+        _singleSinglePostNetworkStatus
 
     fun resetNetworkStatus() {
-        _singlePostCreationEvent.value = PostCreationEvent.IDLE
+        _singleSinglePostNetworkStatus.value = SinglePostNetworkStatus.IDLE
     }
 
     fun updateTitle(title: String) {
@@ -49,36 +50,6 @@ class PostSharedViewModel : ViewModel() {
 
     fun updateBody(body: String) {
         _singlePostUiState.value = _singlePostUiState.value.copy(body = body)
-    }
-
-    fun createNewPost() {
-        viewModelScope.launch {
-            val networkResult: NetworkResult = postRepository.createPost(
-                _singlePostUiState.value.title,
-                _singlePostUiState.value.body
-            )
-
-            when (networkResult) {
-                is NetworkResult.NetworkSuccess<*> -> {
-                    val post = networkResult.data as PostItem
-                    //Add this new value to the listScreen
-                    _postListUiState.value = _postListUiState.value + post
-                    _singlePostCreationEvent.value = PostCreationEvent.SUCCESS
-                    //clear edit screen
-                    _singlePostUiState.value = PostItem(
-                        id = null,
-                        title = null,
-                        body = null,
-                    )
-                }
-
-                is NetworkResult.NetworkFailure -> {
-                    //TODO, NetworkRequestStatus should be a sealed class, so error can contain message
-                    _singlePostCreationEvent.value = PostCreationEvent.ERROR
-                    Log.d("haha", "${networkResult.message}")
-                }
-            }
-        }
     }
 
     fun clearSinglePostUiState() {
@@ -115,26 +86,58 @@ class PostSharedViewModel : ViewModel() {
     }
     //endregion
 
-    private fun getSinglePost(id: Int) {
+
+    fun onPostButtonClick(editMode: EditMode) {
+        when (editMode) {
+            EditMode.CREATE -> {
+                createNewPost()
+            }
+
+            EditMode.EDIT -> {
+
+                // Use MutableStateFlow id instead of Flow id from UI because this is a single/ one time event when user clicks the button
+                _singlePostUiState.value.id?.let {
+                    updateExistingPost(
+                        id = it,
+                        postItem = PostItem(
+                            title = _singlePostUiState.value.title,
+                            body = _singlePostUiState.value.body
+                        )
+                    )
+                }
+
+            }
+        }
+    }
+
+    private fun createNewPost() {
         viewModelScope.launch {
-            val networkResult: NetworkResult = postRepository.getSinglePost(id = id)
+            val networkResult: NetworkResult = postRepository.createPost(
+                _singlePostUiState.value.title,
+                _singlePostUiState.value.body
+            )
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    val postItem = networkResult.data as PostItem
-                    _singlePostUiState.value =
-                        _singlePostUiState.value.copy(
-                            title = postItem.title,
-                            body = postItem.body
-                        )
+                    val post = networkResult.data as PostItem
+                    //Add this new value to the listScreen
+                    _postListUiState.value = _postListUiState.value + post
+                    _singleSinglePostNetworkStatus.value = SinglePostNetworkStatus.SUCCESS
+                    //clear edit screen
+                    _singlePostUiState.value = PostItem(
+                        id = null,
+                        title = null,
+                        body = null,
+                    )
                 }
 
                 is NetworkResult.NetworkFailure -> {
+                    //TODO, NetworkRequestStatus should be a sealed class, so error can contain message
+                    _singleSinglePostNetworkStatus.value = SinglePostNetworkStatus.ERROR
                     Log.d("haha", "${networkResult.message}")
                 }
             }
         }
-
     }
 
     private fun updateExistingPost(id: Int, postItem: PostItem) {
@@ -150,40 +153,16 @@ class PostSharedViewModel : ViewModel() {
                     _postListUiState.value = _postListUiState.value.map { existingPost ->
                         if (existingPost.id == updatedPost.id) updatedPost else existingPost
                     }
-                    _singlePostCreationEvent.value = PostCreationEvent.SUCCESS
+                    _singleSinglePostNetworkStatus.value = SinglePostNetworkStatus.SUCCESS
                     // Update the edit screen to show the updated post
                     _singlePostUiState.value = updatedPost
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    _singlePostCreationEvent.value = PostCreationEvent.ERROR
+                    _singleSinglePostNetworkStatus.value = SinglePostNetworkStatus.ERROR
                     Log.e("ViewModel", "Error updating post: ${networkResult.message}")
                 }
             }
-        }
-    }
-
-    fun onPostButtonClick(editMode: EditMode, postItem: PostItem) {
-        when (editMode) {
-            EditMode.CREATE -> {
-                createNewPost()
-            }
-
-            EditMode.EDIT -> {
-                postItem.id?.let {
-                    updateExistingPost(
-                        id = it,
-                        postItem = PostItem(title = postItem.title, body = postItem.body)
-                    )
-                }
-            }
-        }
-
-    }
-
-    fun onEditButtonClick(id: Int?) {
-        id?.let {
-            getSinglePost(id = it)
         }
     }
 
@@ -191,28 +170,28 @@ class PostSharedViewModel : ViewModel() {
         _singlePostUiState.value = postItem
     }
 
-    fun onDeleteButtonClick(id: Int) {
+    fun onDeleteButtonClick() {
         viewModelScope.launch {
-            val networkResult: NetworkResult = postRepository.deleteSinglePost(id = id)
+            _singlePostUiState.value.id?.let { selectedDeleteId ->
+                val networkResult: NetworkResult =
+                    postRepository.deleteSinglePost(id = selectedDeleteId)
+                when (networkResult) {
+                    is NetworkResult.NetworkSuccess<*> -> {
+                        // Remove the post with the matching id from the list
+                        val newList: List<PostItem> =
+                            _postListUiState.value.filterNot { it.id == selectedDeleteId }
+                        // Update the UI state with the new list
+                        _postListUiState.value = newList
+                    }
 
-            when (networkResult) {
-                is NetworkResult.NetworkSuccess<*> -> {
-                    println("hahaha _postListUiState: ${_postListUiState.value}")
-                    println("hahahaid: $id")
-                    // Remove the post with the matching id from the list
-                    val newList: List<PostItem> = _postListUiState.value.filterNot { it.id == id }
-                    // Update the UI state with the new list
-                    _postListUiState.value = newList
+                    is NetworkResult.NetworkFailure -> {
+                        // TODO- show user you cannot delete an item, setup an event first,
+                        // then listen for the event in the UI, and show the error UI
 
-
-                }
-
-                is NetworkResult.NetworkFailure -> {
-                    // TODO- show user you cannot delete an item, setup an event first,
-                    // then listen for the event in the UI, and show the error UI
-
+                    }
                 }
             }
+
         }
     }
 

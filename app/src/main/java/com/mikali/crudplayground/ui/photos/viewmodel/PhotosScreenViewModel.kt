@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.photos
+package com.mikali.crudplayground.ui.photos.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

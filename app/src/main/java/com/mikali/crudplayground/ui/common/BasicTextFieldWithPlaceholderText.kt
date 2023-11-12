@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.components
+package com.mikali.crudplayground.ui.common
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.text.BasicTextField
@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 
 /**
@@ -18,7 +19,7 @@ import androidx.compose.ui.text.TextStyle
  * The placeholder will only be visible when the BasicTextField is empty.
  */
 @Composable
-fun BasicTextFieldWithPlaceholder(
+fun BasicTextFieldWithPlaceholderText(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -51,7 +52,8 @@ fun BasicTextFieldWithPlaceholder(
             onValueChange = onValueChange,
             textStyle = textStyle,
             keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions
+            keyboardActions = keyboardActions,
+            cursorBrush = SolidColor(Color.White)
         )
     }
 }

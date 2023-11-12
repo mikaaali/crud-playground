@@ -1,21 +1,23 @@
-package com.mikali.crudplayground.ui.photos
+package com.mikali.crudplayground.ui.photos.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -26,18 +28,26 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.mikali.crudplayground.R
 import com.mikali.crudplayground.data.network.model.ImageItem
-import com.mikali.crudplayground.ui.theme.appBackgroundColor
+import com.mikali.crudplayground.ui.photos.viewmodel.PhotosScreenViewModel
+import com.mikali.crudplayground.ui.posts.listview.showBottomSheet
+import com.mikali.crudplayground.ui.theme.tealGreen
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PhotoListScreen(showDialog: MutableState<Boolean>) {
+fun PhotosScreen(
+    paddingValues: PaddingValues,
+    bottomSheetState: ModalBottomSheetState,
+) {
 
     val photosScreenViewModel: PhotosScreenViewModel = viewModel()
     val uiState: State<List<ImageItem>> = photosScreenViewModel.images.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2), // Number of columns
-        contentPadding = PaddingValues(8.dp), // Padding around the grid
-        modifier = Modifier.background(appBackgroundColor)
+        contentPadding = paddingValues, // Padding around the grid
+        modifier = Modifier.background(tealGreen)
     ) {
         items(uiState.value) {
             AsyncImage(
@@ -49,8 +59,11 @@ fun PhotoListScreen(showDialog: MutableState<Boolean>) {
                 contentDescription = stringResource(R.string.imageDescription),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
+                    .aspectRatio(1f)
                     .clickable {
-                        showDialog.value = true
+                        coroutineScope.launch {
+                            showBottomSheet(bottomSheetState)
+                        }
                     }
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -60,4 +73,5 @@ fun PhotoListScreen(showDialog: MutableState<Boolean>) {
             )
         }
     }
+
 }

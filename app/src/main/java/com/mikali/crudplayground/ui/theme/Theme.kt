@@ -10,41 +10,43 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Yellow,
-    secondary = Orange,
-    tertiary = Blue,
-    primaryContainer = Yellow
+    primary = darkTealGreen,
+    secondary = darkSandYellow,
+    tertiary = darkPeach,
+    primaryContainer = darkMintGreen,
+    onPrimary = Color.LightGray,
+    onSecondary = darkCharcoal,
+    background = darkMintGreen,
+    surface = Color.LightGray,
+    onBackground = darkCharcoal,
+    onSurface = darkCharcoal,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Yellow,
-    secondary = Orange,
-    tertiary = Blue,
-    primaryContainer = Yellow, //FAB
-    onSecondary = Yellow //button color
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = tealGreen, // used frequently, good for primary elements (ex. button, tool bar)
+    secondary = sandYellow, // suitable for highlighting secondary elements (ex. navigation drawers, menus, and tabs)
+    tertiary = peach, // could be used for accents and tertiary actions (ex. button, text)
+    primaryContainer = mintGreen, // background of primary element
+    onPrimary = Color.White, // text/icons on primary color
+    onSecondary = charcoal, // text/icons on secondary color
+    background = mintGreen, // app background
+    surface = Color.White, // for cards, sheets, and menus
+    onBackground = charcoal, // for text/icons on background
+    onSurface = charcoal, // for text/icons on surface
 )
 
 @Composable
 fun CRUDPlaygroundTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, // lol this make me cannot hard code the status bar color
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
