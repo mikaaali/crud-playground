@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.posts.editview
+package com.mikali.crudplayground.ui.posts.createandeditview
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -23,7 +23,7 @@ import com.mikali.crudplayground.ui.theme.sandYellow
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun EditScreenTopBar(
+fun CreateAndEditPostScreenTopBar(
     navController: NavHostController,
     //currentScreen: MutableState<NavigationScreens>
 ) {

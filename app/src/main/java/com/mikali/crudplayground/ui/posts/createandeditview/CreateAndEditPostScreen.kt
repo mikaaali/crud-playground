@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.posts.editview
+package com.mikali.crudplayground.ui.posts.createandeditview
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -44,7 +44,7 @@ import com.mikali.crudplayground.ui.theme.sandYellow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditPostScreen(
+fun CreateAndEditPostScreen(
     editMode: EditMode,
     postSharedViewModel: PostSharedViewModel,
     navController: NavHostController,
@@ -89,7 +89,7 @@ fun EditPostScreen(
     }
 
     Scaffold(
-        topBar = { EditScreenTopBar(navController) }
+        topBar = { CreateAndEditPostScreenTopBar(navController) }
     ) {
         Box(
             modifier = Modifier

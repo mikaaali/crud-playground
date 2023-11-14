@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.mikali.crudplayground.ui.photos.view.PhotosScreen
-import com.mikali.crudplayground.ui.posts.editview.EditPostScreen
+import com.mikali.crudplayground.ui.posts.createandeditview.CreateAndEditPostScreen
 import com.mikali.crudplayground.ui.posts.enums.EditMode
 import com.mikali.crudplayground.ui.posts.listview.PostsScreen
 import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
@@ -42,7 +42,7 @@ fun AppNavHost(
             val editMode: EditMode = navBackStackEntry.arguments?.getString("editMode")?.let {
                 EditMode.valueOf(it)
             } ?: EditMode.EDIT
-            EditPostScreen(
+            CreateAndEditPostScreen(
                 editMode = editMode,
                 postSharedViewModel = postSharedViewModel,
                 navController = navController,
