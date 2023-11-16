@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.posts.listview
+package com.mikali.crudplayground.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,6 +20,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -33,30 +34,35 @@ import androidx.navigation.NavController
 import com.mikali.crudplayground.navigation.Screen
 import com.mikali.crudplayground.ui.posts.enums.EditMode
 import com.mikali.crudplayground.ui.posts.model.PostItem
+import com.mikali.crudplayground.ui.posts.view.PostCard
+import com.mikali.crudplayground.ui.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
 import com.mikali.crudplayground.ui.theme.peach
 import com.mikali.crudplayground.ui.theme.tealGreen
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PostsScreen(
+fun PostsListScreen(
     paddingValues: PaddingValues,
     bottomSheetState: ModalBottomSheetState,
-    postSharedViewModel: PostSharedViewModel,
     navController: NavController,
+    postListViewModel: PostListViewModel
 ) {
 
-    val uiState: State<List<PostItem>> = postSharedViewModel.postListUiState.collectAsState()
+    val postListUiState: State<List<PostItem>> = postListViewModel.postListUiState.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         ListOfLazyCard(
             paddingValues = paddingValues,
-            postItems = uiState.value,
-            onPullRefresh = { postSharedViewModel.fetchAllPosts() },
+            postItems = postListUiState.value,
+            onPullRefresh = {
+                postListViewModel.fetchAllPosts()
+            },
             onOptionsClick = {
-                postSharedViewModel.setCurrentSelectSinglePostItem(postItem = it)
+//                postSharedViewModel.setCurrentSelectSinglePostItem(postItem = it)
             },
             bottomSheetState = bottomSheetState
         )
@@ -64,7 +70,8 @@ fun PostsScreen(
         FloatingActionButton(
             shape = RoundedCornerShape(16.dp),
             backgroundColor = peach,
-            onClick = { navController.navigate(Screen.EditPost().createRoute(EditMode.CREATE))
+            onClick = {
+                navController.navigate(Screen.EditPost().createRoute(EditMode.CREATE))
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -95,22 +102,26 @@ private fun ListOfLazyCard(
     bottomSheetState: ModalBottomSheetState
 ) {
     val coroutineScope = rememberCoroutineScope() // Create a CoroutineScope tied to this composable
-    val refreshing = remember { mutableStateOf(false) }
+    val isRefreshing = remember { mutableStateOf(false) }
+    println("chris postItems ${postItems.size}")
 
 
     fun refresh() = coroutineScope.launch {
-        refreshing.value = true
-        delay(1500)
+        println("chris entro a refresh()")
+        isRefreshing.value = true
+        delay(1500L)
         onPullRefresh.invoke()
-        refreshing.value = false
+        isRefreshing.value = false
     }
 
     val refreshState = rememberPullRefreshState(
-        refreshing = refreshing.value,
+        refreshing = isRefreshing.value,
         onRefresh = { refresh() }
     )
 
-    Box(Modifier.pullRefresh(refreshState)) {
+    Box(
+        modifier = Modifier.pullRefresh(refreshState),
+    ) {
         LazyColumn(
             Modifier
                 .background(color = tealGreen)
@@ -119,7 +130,7 @@ private fun ListOfLazyCard(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            if (!refreshing.value) {
+            if (!isRefreshing.value) {
                 items(items = postItems) { cardItem ->
                     PostCard(
                         postItem = cardItem,
@@ -134,7 +145,13 @@ private fun ListOfLazyCard(
             }
         }
 
-        PullRefreshIndicator(refreshing.value, refreshState, Modifier.align(Alignment.TopCenter))
+        PullRefreshIndicator(
+            refreshing = isRefreshing.value,
+            state = refreshState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 16.dp)
+        )
     }
 }
 

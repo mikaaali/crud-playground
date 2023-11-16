@@ -28,9 +28,8 @@ class PostRepository(
                         NetworkResult.NetworkSuccess(it.map { postItemResponse ->
                             postItemResponse.toPostItem()
                         })
-                    }
-                        ?: NetworkResult.NetworkSuccess(emptyList<PostItem>()) //TODO-handle this with NetworkResult.NetworkEmpty()
-
+                    } ?: NetworkResult.NetworkSuccess(emptyList<PostItem>())
+                //TODO-handle this with NetworkResult.NetworkEmpty()
                 } else { // http status code 300-500
                     NetworkResult.NetworkFailure(R.string.http_request_error)
                 }
@@ -39,25 +38,6 @@ class PostRepository(
             NetworkResult.NetworkFailure(R.string.no_internet_connection)
         }
     }
-
-    //Asynchronous execution using enqueue and callbacks.
-    /*    fun getAllPosts(callback: (List<PostItem>?, Throwable?) -> Unit) {
-            val call = postService.getAllPosts()
-
-            call.enqueue(object : Callback<List<PostItem>> {
-                override fun onResponse(call: Call<List<PostItem>>, response: Response<List<PostItem>>) {
-                    if (response.isSuccessful) {
-                        callback(response.body(), null)
-                    } else {
-                        callback(null, IOException("Error fetching posts, response: ${response.errorBody()}"))
-                    }
-                }
-
-                override fun onFailure(call: Call<List<PostItem>>, t: Throwable) {
-                    callback(null, t)
-                }
-            })
-        }*/
 
     suspend fun createPost(title: String?, body: String?): NetworkResult {
         return try {

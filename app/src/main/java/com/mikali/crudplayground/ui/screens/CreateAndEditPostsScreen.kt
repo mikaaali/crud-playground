@@ -1,6 +1,5 @@
-package com.mikali.crudplayground.ui.posts.createandeditview
+package com.mikali.crudplayground.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,13 +19,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,57 +35,49 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.mikali.crudplayground.ui.common.BasicTextFieldWithPlaceholderText
+import com.mikali.crudplayground.ui.createandedit.CreateAndEditPostScreenTopBar
+import com.mikali.crudplayground.ui.createandedit.CreateAndEditPostViewModel
 import com.mikali.crudplayground.ui.posts.enums.EditMode
-import com.mikali.crudplayground.ui.posts.enums.SinglePostNetworkStatus
 import com.mikali.crudplayground.ui.posts.model.PostItem
 import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
 import com.mikali.crudplayground.ui.theme.charcoal
 import com.mikali.crudplayground.ui.theme.sandYellow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateAndEditPostScreen(
+fun CreateAndEditPostsScreen(
     editMode: EditMode,
     postSharedViewModel: PostSharedViewModel,
     navController: NavHostController,
+    createAndEditPostViewModel: CreateAndEditPostViewModel
 ) {
 
     val focusManager = LocalFocusManager.current
 
-    val singlePostUiState: State<PostItem> = postSharedViewModel.singlePostUiState.collectAsState()
-    val singlePostNetworkStatus: State<SinglePostNetworkStatus> =
-        postSharedViewModel.singleSinglePostNetworkStatus.collectAsState()
-
-    // observe single post network status and navigate accordingly based on flow result
-    // previously, we tried to call pop back and create/update a post in a non-blocking manner
-    // so network request to POST/PATCH keeps getting interrupted
-    when (singlePostNetworkStatus.value) {
-        SinglePostNetworkStatus.SUCCESS -> {
-            focusManager.clearFocus()
-            navController.popBackStack()
-            postSharedViewModel.resetNetworkStatus()
-        }
-
-        SinglePostNetworkStatus.ERROR -> {
-            /**
-             * TODO-better looking error UI, toast auto disappears after sometime,
-             * but other custom UI will not, so reset NetworkRequestStatus to Idle,
-             * otherwise, the UI just retain there, maybe use some animation UI in the future
-             */
-            Toast.makeText(
-                LocalContext.current,
-                "not able to upload a new post to the server",
-                Toast.LENGTH_SHORT
-            ).show()
-            postSharedViewModel.resetNetworkStatus()
-        }
-
-        else -> {} // Don't need to do anything for idle, user did not press the post button
-    }
+    val postUiState: State<PostItem> = createAndEditPostViewModel.postUiState.collectAsState()
 
     // Setup for create/edit mode
     if (editMode == EditMode.CREATE) {
         postSharedViewModel.clearSinglePostUiState()
+    }
+
+    LaunchedEffect(createAndEditPostViewModel.event) {
+        createAndEditPostViewModel.event.collectLatest {
+            when (it) {
+                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostSuccessFul -> {
+                    navController.popBackStack()
+                    focusManager.clearFocus()
+                }
+                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostSuccessFul -> {
+                    navController.popBackStack()
+                    focusManager.clearFocus()
+                }
+            }
+        }
     }
 
     Scaffold(
@@ -104,9 +96,10 @@ fun CreateAndEditPostScreen(
             ) {
                 //Title Text
                 BasicTextFieldWithPlaceholderText(
-                    value = singlePostUiState.value.title ?: "",
+                    value = postUiState.value.title.orEmpty(),
                     onValueChange = { keyboardInput ->
-                        postSharedViewModel.updateTitle(keyboardInput)
+                        println("chris keyboard $keyboardInput")
+                        createAndEditPostViewModel.updateTitle(keyboardInput)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -127,9 +120,9 @@ fun CreateAndEditPostScreen(
 
                 //Body Text
                 BasicTextFieldWithPlaceholderText(
-                    value = singlePostUiState.value.body ?: "",
+                    value = postUiState.value.body.orEmpty(),
                     onValueChange = { keyboardInput ->
-                        postSharedViewModel.updateBody(keyboardInput)
+                        createAndEditPostViewModel.updateBody(keyboardInput)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -154,7 +147,7 @@ fun CreateAndEditPostScreen(
                     .padding(16.dp)
                     .align(Alignment.BottomCenter),
                 onClick = {
-                    postSharedViewModel.onPostButtonClick(
+                    createAndEditPostViewModel.onPostButtonClick(
                         editMode = editMode,
                     )
                 },

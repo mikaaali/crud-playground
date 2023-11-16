@@ -9,11 +9,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.mikali.crudplayground.ui.photos.view.PhotosScreen
-import com.mikali.crudplayground.ui.posts.createandeditview.CreateAndEditPostScreen
+import com.mikali.crudplayground.ui.createandedit.CreateAndEditPostViewModel
+import com.mikali.crudplayground.ui.screens.PhotosListScreen
 import com.mikali.crudplayground.ui.posts.enums.EditMode
-import com.mikali.crudplayground.ui.posts.listview.PostsScreen
+import com.mikali.crudplayground.ui.posts.viewmodel.PostListViewModel
+import com.mikali.crudplayground.ui.screens.PostsListScreen
 import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
+import com.mikali.crudplayground.ui.screens.CreateAndEditPostsScreen
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -22,17 +24,19 @@ fun AppNavHost(
     paddingValues: PaddingValues,
     bottomSheetState: ModalBottomSheetState,
     postSharedViewModel: PostSharedViewModel,
+    postListViewModel: PostListViewModel,
+    createAndEditPostViewModel: CreateAndEditPostViewModel
 ) {
     NavHost(
         navController = navController,
         startDestination = Screen.Posts.route
     ) {
         composable(route = Screen.Posts.route) {
-            PostsScreen(
+            PostsListScreen(
                 paddingValues = paddingValues,
                 bottomSheetState = bottomSheetState,
-                postSharedViewModel = postSharedViewModel,
                 navController = navController,
+                postListViewModel = postListViewModel,
             )
         }
         composable(
@@ -42,14 +46,15 @@ fun AppNavHost(
             val editMode: EditMode = navBackStackEntry.arguments?.getString("editMode")?.let {
                 EditMode.valueOf(it)
             } ?: EditMode.EDIT
-            CreateAndEditPostScreen(
+            CreateAndEditPostsScreen(
                 editMode = editMode,
                 postSharedViewModel = postSharedViewModel,
                 navController = navController,
+                createAndEditPostViewModel = createAndEditPostViewModel
             )
         }
         composable(route = Screen.Photos.route) {
-            PhotosScreen(
+            PhotosListScreen(
                 paddingValues = paddingValues,
                 bottomSheetState = bottomSheetState,
             )

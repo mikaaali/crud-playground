@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.posts.listview
+package com.mikali.crudplayground.ui.posts.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border

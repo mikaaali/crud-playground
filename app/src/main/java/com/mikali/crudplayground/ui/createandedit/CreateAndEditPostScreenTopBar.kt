@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.posts.createandeditview
+package com.mikali.crudplayground.ui.createandedit
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size

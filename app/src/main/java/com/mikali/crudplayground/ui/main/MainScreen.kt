@@ -15,8 +15,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mikali.crudplayground.navigation.AppNavHost
 import com.mikali.crudplayground.navigation.Screen
+import com.mikali.crudplayground.ui.createandedit.CreateAndEditPostViewModel
 import com.mikali.crudplayground.ui.photos.view.PhotosScreenBottomSheetContent
-import com.mikali.crudplayground.ui.posts.listview.PostsScreenBottomSheetContent
+import com.mikali.crudplayground.ui.posts.view.PostsScreenBottomSheetContent
+import com.mikali.crudplayground.ui.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
 import com.mikali.crudplayground.ui.theme.tealGreen
 
@@ -28,6 +30,8 @@ fun MainScreen(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope() // rememberCoroutineScope is used to launch a coroutine from a composable, move this to viewModel
 
     val postSharedViewModel: PostSharedViewModel = viewModel()
+    val postListViewModel: PostListViewModel = PostListViewModel()
+    val createAndEditPostViewModel = CreateAndEditPostViewModel()
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val notEditScreen: Boolean = currentRoute != Screen.EditPost().route
@@ -62,7 +66,9 @@ fun MainScreen(navController: NavHostController) {
                     navController = navController,
                     paddingValues = paddingValues,
                     bottomSheetState = bottomSheetState,
-                    postSharedViewModel = postSharedViewModel
+                    postSharedViewModel = postSharedViewModel,
+                    postListViewModel = postListViewModel,
+                    createAndEditPostViewModel = createAndEditPostViewModel
                 )
             }
         )

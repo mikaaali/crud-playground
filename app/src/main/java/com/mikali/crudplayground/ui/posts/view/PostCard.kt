@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.posts.listview
+package com.mikali.crudplayground.ui.posts.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

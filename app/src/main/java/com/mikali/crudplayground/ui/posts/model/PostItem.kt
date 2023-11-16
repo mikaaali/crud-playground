@@ -12,6 +12,6 @@ data class PostItem(
     val body: String?,
 ) {
     companion object {
-        val Empty = PostItem(title = null, body = null)
+        val Empty = PostItem(id = null, title = null, body = null)
     }
 }

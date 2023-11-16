@@ -2,7 +2,7 @@ package com.mikali.crudplayground.ui.photos.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mikali.crudplayground.data.network.model.ImageItem
+import com.mikali.crudplayground.data.network.model.ImageItemResponse
 import com.mikali.crudplayground.repository.ImageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 
 class PhotosScreenViewModel : ViewModel() {
 
-    private val _images = MutableStateFlow<List<ImageItem>>(emptyList())
-    val images: StateFlow<List<ImageItem>> = _images
+    private val _images = MutableStateFlow<List<ImageItemResponse>>(emptyList())
+    val images: StateFlow<List<ImageItemResponse>> = _images
 
     private val imageRepository = ImageRepository()
 

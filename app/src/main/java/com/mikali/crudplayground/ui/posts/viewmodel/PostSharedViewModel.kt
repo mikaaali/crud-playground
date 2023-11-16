@@ -17,10 +17,9 @@ import kotlinx.coroutines.launch
  * each UI Screen to have it's own viewModel, but since listScreen and editScreen
  * manipulate the same data, it makes sense for them to share 1 viewModel
  */
-class PostSharedViewModel : ViewModel() {
-
+class PostSharedViewModel(
     private val postRepository: PostRepository = PostRepository()
-
+) : ViewModel() {
     // region State for EditScreen
     /**
      * Granularity: Group related states together
@@ -61,9 +60,9 @@ class PostSharedViewModel : ViewModel() {
     private val _postListUiState = MutableStateFlow<List<PostItem>>(emptyList())
     val postListUiState: StateFlow<List<PostItem>> = _postListUiState
 
-    init {
-        fetchAllPosts()
-    }
+//    init {
+//        fetchAllPosts()
+//    }
 
     fun fetchAllPosts() {
         viewModelScope.launch {
@@ -194,23 +193,4 @@ class PostSharedViewModel : ViewModel() {
 
         }
     }
-
-
-    //Asynchronous execution using enqueue and callbacks.
-    /*    private fun fetchAllPosts() {
-            viewModelScope.launch {
-                postRepository.getAllPosts() { fetchedPosts, err ->
-                    if (fetchedPosts != null) {
-                        */
-    /**
-     * Using a sealed class can be a more idiomatic way to represent either
-     * a successful result or an error, instead of two separate instances of StateFlow
-     *//*
-                    _posts.value = fetchedPosts
-                } else if (err != null) {
-                    _error.value = err
-                }
-            }
-        }
-    }*/
 }

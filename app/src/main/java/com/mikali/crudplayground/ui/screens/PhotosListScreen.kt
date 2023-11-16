@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.photos.view
+package com.mikali.crudplayground.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,21 +27,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.mikali.crudplayground.R
-import com.mikali.crudplayground.data.network.model.ImageItem
+import com.mikali.crudplayground.data.network.model.ImageItemResponse
 import com.mikali.crudplayground.ui.photos.viewmodel.PhotosScreenViewModel
-import com.mikali.crudplayground.ui.posts.listview.showBottomSheet
 import com.mikali.crudplayground.ui.theme.tealGreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PhotosScreen(
+fun PhotosListScreen(
     paddingValues: PaddingValues,
     bottomSheetState: ModalBottomSheetState,
 ) {
 
     val photosScreenViewModel: PhotosScreenViewModel = viewModel()
-    val uiState: State<List<ImageItem>> = photosScreenViewModel.images.collectAsState()
+    val uiState: State<List<ImageItemResponse>> = photosScreenViewModel.images.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     LazyVerticalGrid(
@@ -52,7 +51,7 @@ fun PhotosScreen(
         items(uiState.value) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(it.image_url)
+                    .data(it.imageUrl)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(R.drawable.ic_launcher_background),
@@ -73,5 +72,4 @@ fun PhotosScreen(
             )
         }
     }
-
 }
