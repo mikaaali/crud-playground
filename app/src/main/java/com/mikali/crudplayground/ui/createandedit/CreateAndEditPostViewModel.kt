@@ -23,7 +23,7 @@ class CreateAndEditPostViewModel(
     val postUiState: StateFlow<PostItem> = _postUiState
 
     private val _event = MutableSharedFlow<CreateAndEditPostEvent>()
-    val event = _event.distinctUntilChanged()
+    val event = _event.asSharedFlow()
 
     fun updateTitle(title: String) {
         _postUiState.value = _postUiState.value.copy(title = title)
