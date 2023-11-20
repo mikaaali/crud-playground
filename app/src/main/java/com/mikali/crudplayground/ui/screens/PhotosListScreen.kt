@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.mikali.crudplayground.R
@@ -37,9 +36,9 @@ import kotlinx.coroutines.launch
 fun PhotosListScreen(
     paddingValues: PaddingValues,
     bottomSheetState: ModalBottomSheetState,
+    photosScreenViewModel: PhotosScreenViewModel,
 ) {
 
-    val photosScreenViewModel: PhotosScreenViewModel = viewModel()
     val uiState: State<List<ImageItemResponse>> = photosScreenViewModel.images.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -61,6 +60,7 @@ fun PhotosListScreen(
                     .aspectRatio(1f)
                     .clickable {
                         coroutineScope.launch {
+                            photosScreenViewModel.onPhotoClicked(imageUrl = it.imageUrl)
                             showBottomSheet(bottomSheetState)
                         }
                     }

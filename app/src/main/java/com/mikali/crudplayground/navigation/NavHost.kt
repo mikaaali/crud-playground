@@ -10,12 +10,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.mikali.crudplayground.ui.createandedit.CreateAndEditPostViewModel
-import com.mikali.crudplayground.ui.screens.PhotosListScreen
+import com.mikali.crudplayground.ui.photos.viewmodel.PhotosScreenViewModel
 import com.mikali.crudplayground.ui.posts.enums.EditMode
 import com.mikali.crudplayground.ui.posts.viewmodel.PostListViewModel
-import com.mikali.crudplayground.ui.screens.PostsListScreen
 import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
 import com.mikali.crudplayground.ui.screens.CreateAndEditPostsScreen
+import com.mikali.crudplayground.ui.screens.PhotosListScreen
+import com.mikali.crudplayground.ui.screens.PostsListScreen
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -25,7 +26,8 @@ fun AppNavHost(
     bottomSheetState: ModalBottomSheetState,
     postSharedViewModel: PostSharedViewModel,
     postListViewModel: PostListViewModel,
-    createAndEditPostViewModel: CreateAndEditPostViewModel
+    createAndEditPostViewModel: CreateAndEditPostViewModel,
+    photosScreenViewModel: PhotosScreenViewModel,
 ) {
     NavHost(
         navController = navController,
@@ -57,6 +59,7 @@ fun AppNavHost(
             PhotosListScreen(
                 paddingValues = paddingValues,
                 bottomSheetState = bottomSheetState,
+                photosScreenViewModel = photosScreenViewModel,
             )
         }
     }

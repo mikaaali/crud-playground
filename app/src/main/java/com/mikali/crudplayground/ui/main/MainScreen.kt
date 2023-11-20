@@ -9,14 +9,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.mikali.crudplayground.downloadmanager.AppDownloadManagerImpl
 import com.mikali.crudplayground.navigation.AppNavHost
 import com.mikali.crudplayground.navigation.Screen
 import com.mikali.crudplayground.ui.createandedit.CreateAndEditPostViewModel
 import com.mikali.crudplayground.ui.photos.view.PhotosScreenBottomSheetContent
+import com.mikali.crudplayground.ui.photos.viewmodel.PhotosScreenViewModel
 import com.mikali.crudplayground.ui.posts.view.PostsScreenBottomSheetContent
 import com.mikali.crudplayground.ui.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
@@ -25,13 +28,21 @@ import com.mikali.crudplayground.ui.theme.tealGreen
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
+    val appContext = LocalContext.current.applicationContext
 
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val coroutineScope = rememberCoroutineScope() // rememberCoroutineScope is used to launch a coroutine from a composable, move this to viewModel
+    val bottomSheetState =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val coroutineScope =
+        rememberCoroutineScope() // rememberCoroutineScope is used to launch a coroutine from a composable, move this to viewModel
 
     val postSharedViewModel: PostSharedViewModel = viewModel()
     val postListViewModel: PostListViewModel = PostListViewModel()
     val createAndEditPostViewModel = CreateAndEditPostViewModel()
+    val photosScreenViewModel: PhotosScreenViewModel = viewModel(
+        factory = PhotosScreenViewModel.PhotosScreenViewModelFactory(
+            appDownloadManager = AppDownloadManagerImpl(context = appContext),
+        )
+    )
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val notEditScreen: Boolean = currentRoute != Screen.EditPost().route
@@ -43,9 +54,11 @@ fun MainScreen(navController: NavHostController) {
         sheetBackgroundColor = tealGreen,
         sheetContent = {
 
-            if(isPhotoScreen){
-                PhotosScreenBottomSheetContent()
-            }else{
+            if (isPhotoScreen) {
+                PhotosScreenBottomSheetContent(
+                    photosScreenViewModel = photosScreenViewModel,
+                )
+            } else {
                 PostsScreenBottomSheetContent(
                     coroutineScope = coroutineScope,
                     bottomSheetState = bottomSheetState,
@@ -68,12 +81,12 @@ fun MainScreen(navController: NavHostController) {
                     bottomSheetState = bottomSheetState,
                     postSharedViewModel = postSharedViewModel,
                     postListViewModel = postListViewModel,
-                    createAndEditPostViewModel = createAndEditPostViewModel
+                    createAndEditPostViewModel = createAndEditPostViewModel,
+                    photosScreenViewModel = photosScreenViewModel,
                 )
             }
         )
     }
-
 
 }
 

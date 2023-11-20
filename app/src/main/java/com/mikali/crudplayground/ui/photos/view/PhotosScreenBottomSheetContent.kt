@@ -18,10 +18,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mikali.crudplayground.ui.photos.viewmodel.PhotosScreenViewModel
 import com.mikali.crudplayground.ui.theme.sandYellow
 
 @Composable
-fun PhotosScreenBottomSheetContent() {
+fun PhotosScreenBottomSheetContent(
+    photosScreenViewModel: PhotosScreenViewModel,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -34,7 +37,7 @@ fun PhotosScreenBottomSheetContent() {
     ) {
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { /*TODO*/ },
+            onClick = { photosScreenViewModel.onDownloadClick() },
             shape = RoundedCornerShape(16.dp),
             border = BorderStroke(width = 2.dp, color = Color.Black),
             colors = ButtonDefaults.buttonColors(containerColor = sandYellow)
