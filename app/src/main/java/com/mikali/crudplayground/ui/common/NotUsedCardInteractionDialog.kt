@@ -25,7 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
+import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostSharedViewModel
 
 @Composable
 fun CardInteractionDialog(

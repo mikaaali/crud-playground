@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
-import com.mikali.crudplayground.downloadmanager.DownloadCompletedReceiver
+import com.mikali.crudplayground.network.downloadmanager.DownloadCompletedReceiver
 import com.mikali.crudplayground.ui.main.MainScreen
 import com.mikali.crudplayground.ui.theme.CRUDPlaygroundTheme
 

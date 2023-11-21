@@ -20,7 +20,6 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -31,16 +30,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.mikali.crudplayground.navigation.Screen
-import com.mikali.crudplayground.ui.posts.enums.EditMode
-import com.mikali.crudplayground.ui.posts.model.PostItem
-import com.mikali.crudplayground.ui.posts.view.PostCard
-import com.mikali.crudplayground.ui.posts.viewmodel.PostListViewModel
-import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
+import com.mikali.crudplayground.ui.main.navigation.Screen
+import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
+import com.mikali.crudplayground.ui.screens.posts.model.PostItem
+import com.mikali.crudplayground.ui.screens.posts.view.PostCard
+import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.theme.peach
 import com.mikali.crudplayground.ui.theme.tealGreen
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)

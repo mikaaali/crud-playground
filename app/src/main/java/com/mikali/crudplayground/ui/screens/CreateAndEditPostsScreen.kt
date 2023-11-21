@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -35,17 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.mikali.crudplayground.ui.common.BasicTextFieldWithPlaceholderText
-import com.mikali.crudplayground.ui.createandedit.CreateAndEditPostScreenTopBar
-import com.mikali.crudplayground.ui.createandedit.CreateAndEditPostViewModel
-import com.mikali.crudplayground.ui.posts.enums.EditMode
-import com.mikali.crudplayground.ui.posts.model.PostItem
-import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
+import com.mikali.crudplayground.ui.screens.posts.createandedit.view.CreateAndEditPostScreenTopBar
+import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
+import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
+import com.mikali.crudplayground.ui.screens.posts.model.PostItem
+import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostSharedViewModel
 import com.mikali.crudplayground.ui.theme.charcoal
 import com.mikali.crudplayground.ui.theme.sandYellow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

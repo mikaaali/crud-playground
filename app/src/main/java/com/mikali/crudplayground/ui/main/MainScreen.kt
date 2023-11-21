@@ -17,15 +17,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.mikali.crudplayground.downloadmanager.AppDownloadManagerImpl
-import com.mikali.crudplayground.navigation.AppNavHost
-import com.mikali.crudplayground.navigation.Screen
-import com.mikali.crudplayground.ui.createandedit.CreateAndEditPostViewModel
-import com.mikali.crudplayground.ui.photos.view.PhotosScreenBottomSheetContent
-import com.mikali.crudplayground.ui.photos.viewmodel.PhotosScreenViewModel
-import com.mikali.crudplayground.ui.posts.view.PostsScreenBottomSheetContent
-import com.mikali.crudplayground.ui.posts.viewmodel.PostListViewModel
-import com.mikali.crudplayground.ui.posts.viewmodel.PostSharedViewModel
+import com.mikali.crudplayground.network.downloadmanager.AppDownloadManagerImpl
+import com.mikali.crudplayground.ui.main.navigation.AppNavHost
+import com.mikali.crudplayground.ui.main.navigation.Screen
+import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
+import com.mikali.crudplayground.ui.screens.photos.view.PhotosScreenBottomSheetContent
+import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosScreenViewModel
+import com.mikali.crudplayground.ui.screens.posts.view.PostsScreenBottomSheetContent
+import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
+import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostSharedViewModel
 import com.mikali.crudplayground.ui.theme.tealGreen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
