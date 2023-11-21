@@ -8,6 +8,9 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -44,9 +47,19 @@ fun MainScreen(navController: NavHostController) {
         )
     )
 
+    val downloadRequested: State<Boolean?> =
+        photosScreenViewModel.downloadRequested.collectAsState()
+
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val notEditScreen: Boolean = currentRoute != Screen.EditPost().route
     val isPhotoScreen = currentRoute == Screen.Photos.route
+
+    LaunchedEffect(downloadRequested.value) {
+        println("hahaha, enter here")
+        if (downloadRequested.value == true) {
+            bottomSheetState.hide()
+        }
+    }
 
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
