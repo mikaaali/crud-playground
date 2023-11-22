@@ -23,7 +23,8 @@ import com.mikali.crudplayground.ui.main.navigation.Screen
 import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
 import com.mikali.crudplayground.ui.screens.photos.view.PhotosScreenBottomSheetContent
 import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosScreenViewModel
-import com.mikali.crudplayground.ui.screens.posts.view.PostsScreenBottomSheetContent
+import com.mikali.crudplayground.ui.screens.posts.model.PostItem
+import com.mikali.crudplayground.ui.screens.posts.view.EditAndDeletePostBottomSheetContent
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostSharedViewModel
 import com.mikali.crudplayground.ui.theme.tealGreen
@@ -66,18 +67,19 @@ fun MainScreen(navController: NavHostController) {
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         sheetBackgroundColor = tealGreen,
         sheetContent = {
-
             if (isPhotoScreen) {
                 PhotosScreenBottomSheetContent(
                     photosScreenViewModel = photosScreenViewModel,
                 )
             } else {
-                PostsScreenBottomSheetContent(
+                EditAndDeletePostBottomSheetContent(
                     coroutineScope = coroutineScope,
+                    postItem = postListViewModel.getSelectedPostItem(),
                     bottomSheetState = bottomSheetState,
                     navController = navController,
                     onDeleteButtonClicked = {
-                        postSharedViewModel.onDeleteButtonClick()
+                        //TODO: chris llama a postViewModel delete y setea el selectedPostItem
+                        postListViewModel.onDeleteButtonClick()
                     }
                 )
             }

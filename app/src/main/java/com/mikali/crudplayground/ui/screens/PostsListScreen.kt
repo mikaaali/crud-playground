@@ -58,8 +58,8 @@ fun PostsListScreen(
             onPullRefresh = {
                 postListViewModel.fetchAllPosts()
             },
-            onOptionsClick = {
-//                postSharedViewModel.setCurrentSelectSinglePostItem(postItem = it)
+            onOptionsClick = {postItem ->
+                postListViewModel.setSelectedPostItem(postItem)
             },
             bottomSheetState = bottomSheetState
         )
@@ -100,11 +100,9 @@ private fun ListOfLazyCard(
 ) {
     val coroutineScope = rememberCoroutineScope() // Create a CoroutineScope tied to this composable
     val isRefreshing = remember { mutableStateOf(false) }
-    println("chris postItems ${postItems.size}")
 
 
     fun refresh() = coroutineScope.launch {
-        println("chris entro a refresh()")
         isRefreshing.value = true
         delay(1500L)
         onPullRefresh.invoke()
@@ -134,7 +132,7 @@ private fun ListOfLazyCard(
                         onOptionsClick = {
                             onOptionsClick(cardItem) // Make sure you are calling this correctly
                             coroutineScope.launch { // Launch a coroutine
-                                showBottomSheet(bottomSheetState)
+                                showEditAndDeleteBottomSheet(bottomSheetState)
                             }
                         },
                     )
@@ -153,7 +151,7 @@ private fun ListOfLazyCard(
 }
 
 @OptIn(ExperimentalMaterialApi::class)
-suspend fun showBottomSheet(bottomSheetState: ModalBottomSheetState) {
+suspend fun showEditAndDeleteBottomSheet(bottomSheetState: ModalBottomSheetState) {
     if (bottomSheetState.isVisible) {
         bottomSheetState.hide()
     } else {

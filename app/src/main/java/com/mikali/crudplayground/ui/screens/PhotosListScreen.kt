@@ -61,7 +61,7 @@ fun PhotosListScreen(
                     .clickable {
                         coroutineScope.launch {
                             photosScreenViewModel.onPhotoClicked(imageUrl = it.imageUrl)
-                            showBottomSheet(bottomSheetState)
+                            showEditAndDeleteBottomSheet(bottomSheetState)
                         }
                     }
                     .fillMaxWidth()

@@ -64,7 +64,6 @@ class CreateAndEditPostViewModel(
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    println("chris postCreate successful")
                     _event.emit(CreateAndEditPostEvent.OnCreatePostSuccessFul)
                 }
 

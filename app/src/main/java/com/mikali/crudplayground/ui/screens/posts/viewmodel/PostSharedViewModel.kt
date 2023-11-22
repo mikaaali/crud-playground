@@ -169,9 +169,9 @@ class PostSharedViewModel(
         _singlePostUiState.value = postItem
     }
 
-    fun onDeleteButtonClick() {
+    fun onDeleteButtonClick(postId: Int?) {
         viewModelScope.launch {
-            _singlePostUiState.value.id?.let { selectedDeleteId ->
+            postId?.let { selectedDeleteId ->
                 val networkResult: NetworkResult =
                     postRepository.deleteSinglePost(id = selectedDeleteId)
                 when (networkResult) {
