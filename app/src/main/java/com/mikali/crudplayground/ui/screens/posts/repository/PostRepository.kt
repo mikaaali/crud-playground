@@ -1,13 +1,13 @@
 package com.mikali.crudplayground.ui.screens.posts.repository
 
 import com.mikali.crudplayground.R
-import com.mikali.crudplayground.ui.screens.posts.model.PostItemResponse
 import com.mikali.crudplayground.network.service.NetworkResult
 import com.mikali.crudplayground.network.service.PostApiService
 import com.mikali.crudplayground.network.service.RetrofitInstance
 import com.mikali.crudplayground.ui.screens.posts.mapper.toPostItem
 import com.mikali.crudplayground.ui.screens.posts.mapper.toPostItemResponse
 import com.mikali.crudplayground.ui.screens.posts.model.PostItem
+import com.mikali.crudplayground.ui.screens.posts.model.PostItemResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response

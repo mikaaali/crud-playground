@@ -3,9 +3,9 @@ package com.mikali.crudplayground.ui.screens.posts.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mikali.crudplayground.ui.screens.posts.repository.PostRepository
 import com.mikali.crudplayground.network.service.NetworkResult
 import com.mikali.crudplayground.ui.screens.posts.model.PostItem
+import com.mikali.crudplayground.ui.screens.posts.repository.PostRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +19,8 @@ class PostListViewModel(
     private val _postListUiState = MutableStateFlow<List<PostItem>>(emptyList())
     val postListUiState: StateFlow<List<PostItem>> = _postListUiState
 
-    private var selectedPostItem: PostItem? = null
+    private val _selectedPostItem = MutableStateFlow(PostItem.Empty)
+    val selectedPostItem: StateFlow<PostItem> = _selectedPostItem
 
     private val _events = MutableSharedFlow<PostListEvent>()
     val events: Flow<PostListEvent> = _events.asSharedFlow()
@@ -30,7 +31,6 @@ class PostListViewModel(
 
     fun fetchAllPosts() {
         viewModelScope.launch {
-            println("chris fetchAllPosts")
             val networkResult: NetworkResult = postRepository.getAllPosts()
 
             when (networkResult) {
@@ -48,13 +48,11 @@ class PostListViewModel(
     }
 
     fun setSelectedPostItem(postItem: PostItem) {
-        selectedPostItem = postItem
+        _selectedPostItem.value = postItem
     }
 
-    fun getSelectedPostItem(): PostItem? = selectedPostItem
-
     fun onDeleteButtonClick() {
-        val selectedDeleteId = selectedPostItem?.id
+        val selectedDeleteId = selectedPostItem.value.id
         if (selectedDeleteId != null) {
             viewModelScope.launch {
                 try {
@@ -69,7 +67,7 @@ class PostListViewModel(
                     }
                 } finally {
                     // Reset selected item, even if deletion fails
-                    selectedPostItem = null
+                    _selectedPostItem.value = PostItem.Empty
                 }
             }
         }

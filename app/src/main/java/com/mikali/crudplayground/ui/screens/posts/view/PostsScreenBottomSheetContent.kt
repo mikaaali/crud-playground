@@ -23,9 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.mikali.crudplayground.ui.main.navigation.Screen
+import com.mikali.crudplayground.ui.main.navigation.ScreenRoutes
 import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
-import com.mikali.crudplayground.ui.screens.posts.model.PostItem
 import com.mikali.crudplayground.ui.theme.sandYellow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -34,7 +33,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditAndDeletePostBottomSheetContent(
     coroutineScope: CoroutineScope,
-    postItem: PostItem?,
     bottomSheetState: ModalBottomSheetState,
     navController: NavHostController,
     onDeleteButtonClicked: () -> Unit,
@@ -61,7 +59,7 @@ fun EditAndDeletePostBottomSheetContent(
                         bottomSheetState.hide()
                     }
                     // Then navigate to the edit screen
-                    navController.navigate(Screen.EditPost().createRoute(EditMode.EDIT))
+                    navController.navigate(ScreenRoutes.EditPost().createRoute(EditMode.EDIT))
 
                 },
                 shape = RoundedCornerShape(16.dp),

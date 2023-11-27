@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.mikali.crudplayground.ui.main.navigation.Screen
 import com.mikali.crudplayground.ui.common.ChipIcon
+import com.mikali.crudplayground.ui.main.navigation.ScreenRoutes
 import com.mikali.crudplayground.ui.theme.peach
 import com.mikali.crudplayground.ui.theme.tealGreen
 
@@ -43,7 +43,7 @@ fun MainScreenBottomBar(
         val currentDestination = navController.currentDestination?.route
         BottomNavigationItem(
             icon = {
-                val selected = currentDestination == Screen.Posts.route
+                val selected = currentDestination == ScreenRoutes.Posts.route
                 ChipIcon(
                     icon = if (selected) Icons.Filled.PostAdd else Icons.Outlined.PostAdd,
                     selected = selected,
@@ -53,20 +53,20 @@ fun MainScreenBottomBar(
             label = {
                 Text(
                     "Posts",
-                    color = if (currentDestination == Screen.Posts.route) peach else LocalContentColor.current.copy(
+                    color = if (currentDestination == ScreenRoutes.Posts.route) peach else LocalContentColor.current.copy(
                         alpha = ContentAlpha.medium
                     ),
                     fontSize = 10.sp
                 )
             },
-            selected = currentDestination == Screen.Posts.route,
+            selected = currentDestination == ScreenRoutes.Posts.route,
             onClick = {
-                navController.navigate(route = Screen.Posts.route)
+                navController.navigate(route = ScreenRoutes.Posts.route)
             }
         )
         BottomNavigationItem(
             icon = {
-                val selected = currentDestination == Screen.Photos.route
+                val selected = currentDestination == ScreenRoutes.Photos.route
                 ChipIcon(
                     icon = if (selected) Icons.Filled.Photo else Icons.Outlined.Photo,
                     selected = selected,
@@ -76,15 +76,15 @@ fun MainScreenBottomBar(
             label = {
                 Text(
                     "Photos",
-                    color = if (currentDestination == Screen.Photos.route) peach else LocalContentColor.current.copy(
+                    color = if (currentDestination == ScreenRoutes.Photos.route) peach else LocalContentColor.current.copy(
                         alpha = ContentAlpha.medium
                     ),
                     fontSize = 10.sp // Smaller text size
                 )
             },
-            selected = currentDestination == Screen.Photos.route,
+            selected = currentDestination == ScreenRoutes.Photos.route,
             onClick = {
-                navController.navigate(route = Screen.Photos.route)
+                navController.navigate(route = ScreenRoutes.Photos.route)
             }
         )
     }

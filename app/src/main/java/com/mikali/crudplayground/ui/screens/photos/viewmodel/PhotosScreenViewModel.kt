@@ -3,8 +3,8 @@ package com.mikali.crudplayground.ui.screens.photos.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.mikali.crudplayground.ui.screens.photos.model.ImageItemResponse
 import com.mikali.crudplayground.network.downloadmanager.AppDownloadManager
+import com.mikali.crudplayground.ui.screens.photos.model.ImageItemResponse
 import com.mikali.crudplayground.ui.screens.photos.repository.PhotoRepository
 import com.mikali.crudplayground.util.generateFileName
 import kotlinx.coroutines.flow.MutableStateFlow

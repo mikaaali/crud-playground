@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
@@ -23,10 +21,8 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.mikali.crudplayground.ui.main.navigation.Screen
+import com.mikali.crudplayground.ui.main.navigation.ScreenRoutes
 import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
 import com.mikali.crudplayground.ui.screens.posts.model.PostItem
 import com.mikali.crudplayground.ui.screens.posts.view.PostCard
@@ -59,7 +55,6 @@ fun PostsListScreen(
         postListViewModel.events.collect { event ->
             when (event) {
                 is PostListViewModel.PostListEvent.OnSuccessDeletePost -> {
-                    println("chris onSuccessDeletePost")
                     postListViewModel.fetchAllPosts()
                 }
             }
@@ -74,7 +69,9 @@ fun PostsListScreen(
                     postListViewModel.fetchAllPosts()
                 },
                 onOptionsClick = { postItem ->
+                    println("chris setting the postItem $postItem")
                     postListViewModel.setSelectedPostItem(postItem)
+                    println("chris seteado el postItem ${postListViewModel.selectedPostItem.value}")
                 },
                 bottomSheetState = bottomSheetState
         )
@@ -83,7 +80,7 @@ fun PostsListScreen(
                 shape = RoundedCornerShape(16.dp),
                 backgroundColor = peach,
                 onClick = {
-                    navController.navigate(Screen.EditPost().createRoute(EditMode.CREATE))
+                    navController.navigate(ScreenRoutes.EditPost().createRoute(EditMode.CREATE))
                 },
                 modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -144,7 +141,7 @@ private fun ListOfLazyCard(
                     PostCard(
                         postItem = cardItem,
                         onOptionsClick = {
-                            onOptionsClick(cardItem) // Make sure you are calling this correctly
+                            onOptionsClick(cardItem)
                             coroutineScope.launch { // Launch a coroutine
                                 showEditAndDeleteBottomSheet(bottomSheetState)
                             }

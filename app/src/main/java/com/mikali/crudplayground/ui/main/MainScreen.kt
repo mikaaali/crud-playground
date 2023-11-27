@@ -19,14 +19,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mikali.crudplayground.network.downloadmanager.AppDownloadManagerImpl
 import com.mikali.crudplayground.ui.main.navigation.AppNavHost
-import com.mikali.crudplayground.ui.main.navigation.Screen
-import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
+import com.mikali.crudplayground.ui.main.navigation.ScreenRoutes
 import com.mikali.crudplayground.ui.screens.photos.view.PhotosScreenBottomSheetContent
 import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosScreenViewModel
-import com.mikali.crudplayground.ui.screens.posts.model.PostItem
+import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
 import com.mikali.crudplayground.ui.screens.posts.view.EditAndDeletePostBottomSheetContent
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
-import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostSharedViewModel
 import com.mikali.crudplayground.ui.theme.tealGreen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -39,8 +37,7 @@ fun MainScreen(navController: NavHostController) {
     val coroutineScope =
         rememberCoroutineScope() // rememberCoroutineScope is used to launch a coroutine from a composable, move this to viewModel
 
-    val postSharedViewModel: PostSharedViewModel = viewModel()
-    val postListViewModel: PostListViewModel = PostListViewModel()
+    val postListViewModel = PostListViewModel()
     val createAndEditPostViewModel = CreateAndEditPostViewModel()
     val photosScreenViewModel: PhotosScreenViewModel = viewModel(
         factory = PhotosScreenViewModel.PhotosScreenViewModelFactory(
@@ -52,8 +49,8 @@ fun MainScreen(navController: NavHostController) {
         photosScreenViewModel.downloadRequested.collectAsState()
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    val notEditScreen: Boolean = currentRoute != Screen.EditPost().route
-    val isPhotoScreen = currentRoute == Screen.Photos.route
+    val notEditScreenRoutes: Boolean = currentRoute != ScreenRoutes.EditPost().route
+    val isPhotoScreenRoutes = currentRoute == ScreenRoutes.Photos.route
 
     LaunchedEffect(downloadRequested.value) {
         println("hahaha, enter here")
@@ -67,18 +64,16 @@ fun MainScreen(navController: NavHostController) {
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         sheetBackgroundColor = tealGreen,
         sheetContent = {
-            if (isPhotoScreen) {
+            if (isPhotoScreenRoutes) {
                 PhotosScreenBottomSheetContent(
                     photosScreenViewModel = photosScreenViewModel,
                 )
             } else {
                 EditAndDeletePostBottomSheetContent(
                     coroutineScope = coroutineScope,
-                    postItem = postListViewModel.getSelectedPostItem(),
                     bottomSheetState = bottomSheetState,
                     navController = navController,
                     onDeleteButtonClicked = {
-                        //TODO: chris llama a postViewModel delete y setea el selectedPostItem
                         postListViewModel.onDeleteButtonClick()
                     }
                 )
@@ -87,14 +82,13 @@ fun MainScreen(navController: NavHostController) {
         }
     ) {
         Scaffold(
-            topBar = { if (notEditScreen) MainScreenTopBar() },
-            bottomBar = { if (notEditScreen) MainScreenBottomBar(navController = navController) },
+            topBar = { if (notEditScreenRoutes) MainScreenTopBar() },
+            bottomBar = { if (notEditScreenRoutes) MainScreenBottomBar(navController = navController) },
             content = { paddingValues ->
                 AppNavHost(
                     navController = navController,
                     paddingValues = paddingValues,
                     bottomSheetState = bottomSheetState,
-                    postSharedViewModel = postSharedViewModel,
                     postListViewModel = postListViewModel,
                     createAndEditPostViewModel = createAndEditPostViewModel,
                     photosScreenViewModel = photosScreenViewModel,

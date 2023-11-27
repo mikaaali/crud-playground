@@ -20,8 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -34,11 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.mikali.crudplayground.ui.common.BasicTextFieldWithPlaceholderText
-import com.mikali.crudplayground.ui.screens.posts.createandedit.view.CreateAndEditPostScreenTopBar
 import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
+import com.mikali.crudplayground.ui.screens.posts.createandedit.view.CreateAndEditPostScreenTopBar
 import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
-import com.mikali.crudplayground.ui.screens.posts.model.PostItem
-import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostSharedViewModel
+import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.theme.charcoal
 import com.mikali.crudplayground.ui.theme.sandYellow
 import kotlinx.coroutines.flow.collectLatest
@@ -47,28 +44,27 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun CreateAndEditPostsScreen(
     editMode: EditMode,
-    postSharedViewModel: PostSharedViewModel,
+    postListViewModel: PostListViewModel,
     navController: NavHostController,
     createAndEditPostViewModel: CreateAndEditPostViewModel
 ) {
 
     val focusManager = LocalFocusManager.current
 
-    val postUiState: State<PostItem> = createAndEditPostViewModel.postUiState.collectAsState()
+//    val postUiState: State<PostItem> = createAndEditPostViewModel.postUiState.collectAsState()
+    val postUiState = postListViewModel.selectedPostItem.value
+    println("chris create and edit $postUiState")
 
     // Setup for create/edit mode
     if (editMode == EditMode.CREATE) {
-        postSharedViewModel.clearSinglePostUiState()
+        // TODO: clear the selected post
     }
 
     LaunchedEffect(createAndEditPostViewModel.event) {
         createAndEditPostViewModel.event.collectLatest {
             when (it) {
-                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostSuccessFul -> {
-                    navController.popBackStack()
-                    focusManager.clearFocus()
-                }
-                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostSuccessFul -> {
+                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostSuccessFul,
+                CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostSuccessFul -> {
                     navController.popBackStack()
                     focusManager.clearFocus()
                 }
@@ -92,7 +88,7 @@ fun CreateAndEditPostsScreen(
             ) {
                 //Title Text
                 BasicTextFieldWithPlaceholderText(
-                    value = postUiState.value.title.orEmpty(),
+                    value = postUiState?.title.orEmpty(),
                     onValueChange = { keyboardInput ->
                         println("chris keyboard $keyboardInput")
                         createAndEditPostViewModel.updateTitle(keyboardInput)
@@ -116,7 +112,7 @@ fun CreateAndEditPostsScreen(
 
                 //Body Text
                 BasicTextFieldWithPlaceholderText(
-                    value = postUiState.value.body.orEmpty(),
+                    value = postUiState?.body.orEmpty(),
                     onValueChange = { keyboardInput ->
                         createAndEditPostViewModel.updateBody(keyboardInput)
                     },
