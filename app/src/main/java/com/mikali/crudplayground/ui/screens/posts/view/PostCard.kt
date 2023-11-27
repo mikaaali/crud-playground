@@ -40,9 +40,11 @@ fun PostCard(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column( modifier = Modifier
-                .weight(1f)
-                .padding(8.dp)) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+            ) {
                 Text(
                     text = postItem.title.orEmpty(),
                     fontWeight = FontWeight.Bold,

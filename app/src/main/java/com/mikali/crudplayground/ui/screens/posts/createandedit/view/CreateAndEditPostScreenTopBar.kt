@@ -58,5 +58,5 @@ fun CreateAndEditPostScreenTopBar(
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = charcoal)
-        )
+    )
 }

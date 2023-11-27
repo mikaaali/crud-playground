@@ -3,7 +3,6 @@ package com.mikali.crudplayground.ui.screens.posts.createandedit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mikali.crudplayground.network.service.NetworkResult
-import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
 import com.mikali.crudplayground.ui.screens.posts.model.PostItem
 import com.mikali.crudplayground.ui.screens.posts.repository.PostRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,50 +15,43 @@ class CreateAndEditPostViewModel(
     private val postRepository: PostRepository = PostRepository()
 ) : ViewModel() {
 
-    private val _postUiState = MutableStateFlow(PostItem.Empty)
-    val postUiState: StateFlow<PostItem> = _postUiState
+    private val _postItemUiState = MutableStateFlow(PostItem.Empty)
+    val postUiState: StateFlow<PostItem> = _postItemUiState
 
     private val _event = MutableSharedFlow<CreateAndEditPostEvent>()
     val event = _event.asSharedFlow()
 
     fun updateTitle(title: String) {
-        _postUiState.value = _postUiState.value.copy(title = title)
+        _postItemUiState.value = _postItemUiState.value.copy(title = title)
     }
 
     fun updateBody(body: String) {
-        _postUiState.value = _postUiState.value.copy(body = body)
+        _postItemUiState.value = _postItemUiState.value.copy(body = body)
     }
 
-    fun clearSinglePostUiState() {
-        _postUiState.value = PostItem.Empty
+    fun clearSelectedPostItem() {
+        _postItemUiState.value = PostItem.Empty
     }
 
-    fun onPostButtonClick(editMode: EditMode) {
-        when (editMode) {
-            EditMode.CREATE -> {
-                createNewPost()
-            }
+    fun setSelectedPostItem(postItem: PostItem) {
+        _postItemUiState.value = postItem
+    }
 
-            EditMode.EDIT -> {
-
-                // Use MutableStateFlow id instead of Flow id from UI because this is a single/ one time event when user clicks the button
-                _postUiState.value.id?.let {
-                    updateExistingPost(
-                        id = it, postItem = PostItem(
-                            title = _postUiState.value.title,
-                            body = _postUiState.value.body
-                        )
-                    )
-                }
-
-            }
+    fun updatePost() {
+        _postItemUiState.value.id?.let {
+            updateExistingPost(
+                id = it, postItem = PostItem(
+                    title = _postItemUiState.value.title,
+                    body = _postItemUiState.value.body
+                )
+            )
         }
     }
 
-    private fun createNewPost() {
+    fun createNewPost() {
         viewModelScope.launch {
             val networkResult: NetworkResult = postRepository.createPost(
-                _postUiState.value.title, _postUiState.value.body
+                _postItemUiState.value.title, _postItemUiState.value.body
             )
 
             when (networkResult) {
@@ -68,7 +60,7 @@ class CreateAndEditPostViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-
+                    // no-op
                 }
             }
         }
@@ -81,10 +73,11 @@ class CreateAndEditPostViewModel(
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
+                    _event.emit(CreateAndEditPostEvent.OnUpdatePostSuccessFul)
                 }
 
                 is NetworkResult.NetworkFailure -> {
-
+                    // no-op
                 }
             }
         }

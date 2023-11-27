@@ -1,6 +1,5 @@
 package com.mikali.crudplayground.ui.screens.posts.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mikali.crudplayground.network.service.NetworkResult
@@ -15,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class PostListViewModel(
     private val postRepository: PostRepository = PostRepository()
-): ViewModel() {
+) : ViewModel() {
     private val _postListUiState = MutableStateFlow<List<PostItem>>(emptyList())
     val postListUiState: StateFlow<List<PostItem>> = _postListUiState
 
@@ -35,13 +34,12 @@ class PostListViewModel(
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    val posts: List<PostItem> = networkResult.data as List<PostItem> //TODO-unsafe cast, make NetworkResult generic<T>
+                    val posts: List<PostItem> = networkResult.data as List<PostItem>
                     _postListUiState.value = posts
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    Log.d("haha", "${networkResult.message}")
-                    //TODO - emit error UI state, listen for the error UI state in the UI do show a error view
+                    // no-op
                 }
             }
         }
@@ -56,13 +54,15 @@ class PostListViewModel(
         if (selectedDeleteId != null) {
             viewModelScope.launch {
                 try {
-                    val networkResult: NetworkResult = postRepository.deleteSinglePost(id = selectedDeleteId)
+                    val networkResult: NetworkResult =
+                        postRepository.deleteSinglePost(id = selectedDeleteId)
                     when (networkResult) {
                         is NetworkResult.NetworkSuccess<*> -> {
                             _events.emit(PostListEvent.OnSuccessDeletePost)
                         }
+
                         is NetworkResult.NetworkFailure -> {
-                            // TODO - Handle failure UI state
+                            // no-op
                         }
                     }
                 } finally {
@@ -74,6 +74,6 @@ class PostListViewModel(
     }
 
     sealed class PostListEvent {
-        object OnSuccessDeletePost: PostListEvent()
+        object OnSuccessDeletePost : PostListEvent()
     }
 }

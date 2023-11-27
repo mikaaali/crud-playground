@@ -20,6 +20,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -35,6 +37,7 @@ import com.mikali.crudplayground.ui.common.BasicTextFieldWithPlaceholderText
 import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
 import com.mikali.crudplayground.ui.screens.posts.createandedit.view.CreateAndEditPostScreenTopBar
 import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
+import com.mikali.crudplayground.ui.screens.posts.model.PostItem
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.theme.charcoal
 import com.mikali.crudplayground.ui.theme.sandYellow
@@ -51,13 +54,13 @@ fun CreateAndEditPostsScreen(
 
     val focusManager = LocalFocusManager.current
 
-//    val postUiState: State<PostItem> = createAndEditPostViewModel.postUiState.collectAsState()
-    val postUiState = postListViewModel.selectedPostItem.value
-    println("chris create and edit $postUiState")
+    val postUiState: State<PostItem> = createAndEditPostViewModel.postUiState.collectAsState()
 
     // Setup for create/edit mode
     if (editMode == EditMode.CREATE) {
-        // TODO: clear the selected post
+        createAndEditPostViewModel.clearSelectedPostItem()
+    } else if (editMode == EditMode.EDIT) {
+        createAndEditPostViewModel.setSelectedPostItem(postListViewModel.selectedPostItem.value)
     }
 
     LaunchedEffect(createAndEditPostViewModel.event) {
@@ -88,9 +91,8 @@ fun CreateAndEditPostsScreen(
             ) {
                 //Title Text
                 BasicTextFieldWithPlaceholderText(
-                    value = postUiState?.title.orEmpty(),
+                    value = postUiState.value.title.orEmpty(),
                     onValueChange = { keyboardInput ->
-                        println("chris keyboard $keyboardInput")
                         createAndEditPostViewModel.updateTitle(keyboardInput)
                     },
                     modifier = Modifier
@@ -112,7 +114,7 @@ fun CreateAndEditPostsScreen(
 
                 //Body Text
                 BasicTextFieldWithPlaceholderText(
-                    value = postUiState?.body.orEmpty(),
+                    value = postUiState.value.body.orEmpty(),
                     onValueChange = { keyboardInput ->
                         createAndEditPostViewModel.updateBody(keyboardInput)
                     },
@@ -139,9 +141,15 @@ fun CreateAndEditPostsScreen(
                     .padding(16.dp)
                     .align(Alignment.BottomCenter),
                 onClick = {
-                    createAndEditPostViewModel.onPostButtonClick(
-                        editMode = editMode,
-                    )
+                    when (editMode) {
+                        EditMode.CREATE -> {
+                            createAndEditPostViewModel.createNewPost()
+                        }
+
+                        EditMode.EDIT -> {
+                            createAndEditPostViewModel.updatePost()
+                        }
+                    }
                 },
                 shape = RoundedCornerShape(16.dp),
                 border = BorderStroke(width = 2.dp, color = Color.Black),
@@ -149,8 +157,8 @@ fun CreateAndEditPostsScreen(
             ) {
                 Text(
                     text = when (editMode) {
-                        EditMode.CREATE -> "Save New Post"
-                        EditMode.EDIT -> "Save Editing"
+                        EditMode.CREATE -> "Create New Post"
+                        EditMode.EDIT -> "Update Post"
                     },
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,

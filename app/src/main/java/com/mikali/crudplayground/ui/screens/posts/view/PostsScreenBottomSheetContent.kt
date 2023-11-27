@@ -48,8 +48,10 @@ fun EditAndDeletePostBottomSheetContent(
             )
             .padding(20.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
             // Button to navigate to the edit screen
             Button(
                 onClick = {
@@ -95,7 +97,11 @@ fun EditAndDeletePostBottomSheetContent(
                     color = Color.Black,
                     modifier = Modifier.padding(8.dp)
                 )
-                Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete", tint = Color.Black)
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "Delete",
+                    tint = Color.Black
+                )
             }
         }
     }

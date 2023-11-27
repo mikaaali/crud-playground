@@ -44,10 +44,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PostsListScreen(
-        paddingValues: PaddingValues,
-        bottomSheetState: ModalBottomSheetState,
-        navController: NavController,
-        postListViewModel: PostListViewModel
+    paddingValues: PaddingValues,
+    bottomSheetState: ModalBottomSheetState,
+    navController: NavController,
+    postListViewModel: PostListViewModel
 ) {
     val postListUiState by postListViewModel.postListUiState.collectAsState(initial = emptyList())
 
@@ -63,38 +63,36 @@ fun PostsListScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         ListOfLazyCard(
-                paddingValues = paddingValues,
-                postItems = postListUiState,
-                onPullRefresh = {
-                    postListViewModel.fetchAllPosts()
-                },
-                onOptionsClick = { postItem ->
-                    println("chris setting the postItem $postItem")
-                    postListViewModel.setSelectedPostItem(postItem)
-                    println("chris seteado el postItem ${postListViewModel.selectedPostItem.value}")
-                },
-                bottomSheetState = bottomSheetState
+            paddingValues = paddingValues,
+            postItems = postListUiState,
+            onPullRefresh = {
+                postListViewModel.fetchAllPosts()
+            },
+            onOptionsClick = { postItem ->
+                postListViewModel.setSelectedPostItem(postItem)
+            },
+            bottomSheetState = bottomSheetState
         )
 
         FloatingActionButton(
-                shape = RoundedCornerShape(16.dp),
-                backgroundColor = peach,
-                onClick = {
-                    navController.navigate(ScreenRoutes.EditPost().createRoute(EditMode.CREATE))
-                },
-                modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = 60.dp, end = 8.dp) // floating action button is behind the
-                        .border(
-                                width = 2.dp, // Set the width of the stroke
-                                color = Color.Black, // Set the color of the stroke
-                                shape = RoundedCornerShape(16.dp) // Apply the same rounded shape to the stroke
-                        ),
+            shape = RoundedCornerShape(16.dp),
+            backgroundColor = peach,
+            onClick = {
+                navController.navigate(ScreenRoutes.EditPost().createRoute(EditMode.CREATE))
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 60.dp, end = 8.dp) // floating action button is behind the
+                .border(
+                    width = 2.dp, // Set the width of the stroke
+                    color = Color.Black, // Set the color of the stroke
+                    shape = RoundedCornerShape(16.dp) // Apply the same rounded shape to the stroke
+                ),
         ) {
             Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add Post",
-                    tint = Color.White,
+                imageVector = Icons.Filled.Add,
+                contentDescription = "Add Post",
+                tint = Color.White,
             )
         }
 
@@ -104,11 +102,11 @@ fun PostsListScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ListOfLazyCard(
-        paddingValues: PaddingValues,
-        postItems: List<PostItem>,
-        onPullRefresh: () -> Unit,
-        onOptionsClick: (PostItem) -> Unit,
-        bottomSheetState: ModalBottomSheetState
+    paddingValues: PaddingValues,
+    postItems: List<PostItem>,
+    onPullRefresh: () -> Unit,
+    onOptionsClick: (PostItem) -> Unit,
+    bottomSheetState: ModalBottomSheetState
 ) {
     val coroutineScope = rememberCoroutineScope() // Create a CoroutineScope tied to this composable
     val isRefreshing = remember { mutableStateOf(false) }
@@ -121,20 +119,20 @@ private fun ListOfLazyCard(
     }
 
     val refreshState = rememberPullRefreshState(
-            refreshing = isRefreshing.value,
-            onRefresh = { refresh() }
+        refreshing = isRefreshing.value,
+        onRefresh = { refresh() }
     )
 
     Box(
-            modifier = Modifier.pullRefresh(refreshState),
+        modifier = Modifier.pullRefresh(refreshState),
     ) {
         LazyColumn(
-                Modifier
-                        .background(color = tealGreen)
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+            Modifier
+                .background(color = tealGreen)
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             if (!isRefreshing.value) {
                 items(items = postItems) { cardItem ->
@@ -152,11 +150,11 @@ private fun ListOfLazyCard(
         }
 
         PullRefreshIndicator(
-                refreshing = isRefreshing.value,
-                state = refreshState,
-                modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 16.dp)
+            refreshing = isRefreshing.value,
+            state = refreshState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 16.dp)
         )
     }
 }

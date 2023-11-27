@@ -31,7 +31,6 @@ fun AppNavHost(
         navController = navController,
         startDestination = ScreenRoutes.Posts.route
     ) {
-        println("chris en navHost ${postListViewModel.selectedPostItem.value}")
         composable(route = ScreenRoutes.Posts.route) {
             PostsListScreen(
                 paddingValues = paddingValues,

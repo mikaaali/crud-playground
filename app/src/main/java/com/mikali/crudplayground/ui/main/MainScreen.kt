@@ -37,8 +37,8 @@ fun MainScreen(navController: NavHostController) {
     val coroutineScope =
         rememberCoroutineScope() // rememberCoroutineScope is used to launch a coroutine from a composable, move this to viewModel
 
-    val postListViewModel = PostListViewModel()
-    val createAndEditPostViewModel = CreateAndEditPostViewModel()
+    val postListViewModel: PostListViewModel = viewModel()
+    val createAndEditPostViewModel: CreateAndEditPostViewModel = viewModel()
     val photosScreenViewModel: PhotosScreenViewModel = viewModel(
         factory = PhotosScreenViewModel.PhotosScreenViewModelFactory(
             appDownloadManager = AppDownloadManagerImpl(context = appContext),

@@ -9,5 +9,5 @@ interface AppDownloadManager {
      * @param fileName the name of the file to save
      * @return the id of the download
      */
-    fun downloadFile(url: String, fileName: String) : Long
+    fun downloadFile(url: String, fileName: String): Long
 }

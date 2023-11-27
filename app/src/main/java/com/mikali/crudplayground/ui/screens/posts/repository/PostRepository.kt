@@ -12,15 +12,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 import java.net.UnknownHostException
+import kotlin.coroutines.CoroutineContext
 
 class PostRepository(
-    private val postApiService: PostApiService = RetrofitInstance.instance.create(PostApiService::class.java)
+    private val postApiService: PostApiService = RetrofitInstance.instance.create(PostApiService::class.java),
+    private val ioDispatcher: CoroutineContext = Dispatchers.IO
 ) {
 
     suspend fun getAllPosts(): NetworkResult {
         //Network data flow run on IO thread
         return try {
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 val response = postApiService.getAllPosts()
                 if (response.isSuccessful) {
                     //convert from network response model to UI model
@@ -29,7 +31,7 @@ class PostRepository(
                             postItemResponse.toPostItem()
                         })
                     } ?: NetworkResult.NetworkSuccess(emptyList<PostItem>())
-                //TODO-handle this with NetworkResult.NetworkEmpty()
+                    //TODO-handle this with NetworkResult.NetworkEmpty()
                 } else { // http status code 300-500
                     NetworkResult.NetworkFailure(R.string.http_request_error)
                 }
@@ -41,7 +43,7 @@ class PostRepository(
 
     suspend fun createPost(title: String?, body: String?): NetworkResult {
         return try {
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 val response = postApiService.createNewPost(
                     postItemResponse = PostItemResponse(
                         id = null,
@@ -65,7 +67,7 @@ class PostRepository(
 
     suspend fun getSinglePost(id: Int): NetworkResult {
         return try {
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 val response: Response<PostItemResponse> = postApiService.getSinglePost(id = id)
                 if (response.isSuccessful) {
                     response.body()?.let {
@@ -83,7 +85,7 @@ class PostRepository(
 
     suspend fun updatePost(id: Int, postItem: PostItem): NetworkResult {
         return try {
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 val response: Response<PostItemResponse> = postApiService.updateExistingPost(
                     id = id,
                     postItemResponse = postItem.toPostItemResponse()
@@ -103,7 +105,7 @@ class PostRepository(
 
     suspend fun deleteSinglePost(id: Int): NetworkResult {
         return try {
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 val response = postApiService.deleteSinglePost(id = id)
                 if (response.isSuccessful) {
                     NetworkResult.NetworkSuccess(true)
