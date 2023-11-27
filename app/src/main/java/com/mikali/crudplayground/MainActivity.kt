@@ -2,6 +2,7 @@ package com.mikali.crudplayground
 
 import android.app.DownloadManager
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,9 +30,13 @@ class MainActivity : ComponentActivity() {
         // registering a BroadcastReceiver handled at the activity level
         downloadCompletedReceiver = DownloadCompletedReceiver()
         //DownloadManager.ACTION_DOWNLOAD_COMPLETE is broadcasted by the OS's DownloadManager when a download completes
-        val filter: IntentFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        val filter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         // tell broadcast receiver to listen for download complete action
-        registerReceiver(downloadCompletedReceiver, filter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(downloadCompletedReceiver, filter, RECEIVER_EXPORTED)
+        } else {
+            registerReceiver(downloadCompletedReceiver, filter)
+        }
     }
 
     override fun onStop() {
