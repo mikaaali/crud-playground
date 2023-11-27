@@ -1,10 +1,12 @@
 package com.mikali.crudplayground.ui.screens.photos.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.mikali.crudplayground.network.downloadmanager.AppDownloadManager
-import com.mikali.crudplayground.ui.screens.photos.model.ImageItemResponse
+import com.mikali.crudplayground.network.service.NetworkResult
+import com.mikali.crudplayground.ui.screens.photos.model.PhotoItem
 import com.mikali.crudplayground.ui.screens.photos.repository.PhotoRepository
 import com.mikali.crudplayground.util.generateFileName
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +17,8 @@ class PhotosScreenViewModel(
     private val appDownloadManager: AppDownloadManager,
 ) : ViewModel() {
 
-    private val _images = MutableStateFlow<List<ImageItemResponse>>(emptyList())
-    val images: StateFlow<List<ImageItemResponse>> = _images
+    private val _images = MutableStateFlow<List<PhotoItem>>(emptyList())
+    val images: StateFlow<List<PhotoItem>> = _images
 
     private lateinit var imageUrl: String
 
@@ -31,8 +33,18 @@ class PhotosScreenViewModel(
 
     private fun fetchAllImages() {
         viewModelScope.launch {
-            val images = photoRepository.getAllPhotos()
-            _images.value = images
+            val networkResult: NetworkResult = photoRepository.getAllPhotos()
+
+            when (networkResult) {
+                is NetworkResult.NetworkSuccess<*> -> {
+                    val images: List<PhotoItem> = networkResult.data as List<PhotoItem>
+                    _images.value = images
+                }
+
+                is NetworkResult.NetworkFailure -> {
+                    Log.d("haha", "${networkResult.message}")
+                }
+            }
         }
     }
 
