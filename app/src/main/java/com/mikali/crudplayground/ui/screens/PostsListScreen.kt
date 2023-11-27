@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
@@ -20,8 +22,11 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,46 +48,56 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PostsListScreen(
-    paddingValues: PaddingValues,
-    bottomSheetState: ModalBottomSheetState,
-    navController: NavController,
-    postListViewModel: PostListViewModel
+        paddingValues: PaddingValues,
+        bottomSheetState: ModalBottomSheetState,
+        navController: NavController,
+        postListViewModel: PostListViewModel
 ) {
+    val postListUiState by postListViewModel.postListUiState.collectAsState(initial = emptyList())
 
-    val postListUiState: State<List<PostItem>> = postListViewModel.postListUiState.collectAsState()
+    LaunchedEffect(postListViewModel.events) {
+        postListViewModel.events.collect { event ->
+            when (event) {
+                is PostListViewModel.PostListEvent.OnSuccessDeletePost -> {
+                    println("chris onSuccessDeletePost")
+                    postListViewModel.fetchAllPosts()
+                }
+            }
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         ListOfLazyCard(
-            paddingValues = paddingValues,
-            postItems = postListUiState.value,
-            onPullRefresh = {
-                postListViewModel.fetchAllPosts()
-            },
-            onOptionsClick = {postItem ->
-                postListViewModel.setSelectedPostItem(postItem)
-            },
-            bottomSheetState = bottomSheetState
+                paddingValues = paddingValues,
+                postItems = postListUiState,
+                onPullRefresh = {
+                    postListViewModel.fetchAllPosts()
+                },
+                onOptionsClick = { postItem ->
+                    postListViewModel.setSelectedPostItem(postItem)
+                },
+                bottomSheetState = bottomSheetState
         )
 
         FloatingActionButton(
-            shape = RoundedCornerShape(16.dp),
-            backgroundColor = peach,
-            onClick = {
-                navController.navigate(Screen.EditPost().createRoute(EditMode.CREATE))
-            },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 60.dp, end = 8.dp) // floating action button is behind the
-                .border(
-                    width = 2.dp, // Set the width of the stroke
-                    color = Color.Black, // Set the color of the stroke
-                    shape = RoundedCornerShape(16.dp) // Apply the same rounded shape to the stroke
-                ),
+                shape = RoundedCornerShape(16.dp),
+                backgroundColor = peach,
+                onClick = {
+                    navController.navigate(Screen.EditPost().createRoute(EditMode.CREATE))
+                },
+                modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 60.dp, end = 8.dp) // floating action button is behind the
+                        .border(
+                                width = 2.dp, // Set the width of the stroke
+                                color = Color.Black, // Set the color of the stroke
+                                shape = RoundedCornerShape(16.dp) // Apply the same rounded shape to the stroke
+                        ),
         ) {
             Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "Add Post",
-                tint = Color.White,
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add Post",
+                    tint = Color.White,
             )
         }
 
@@ -92,15 +107,14 @@ fun PostsListScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ListOfLazyCard(
-    paddingValues: PaddingValues,
-    postItems: List<PostItem>,
-    onPullRefresh: () -> Unit,
-    onOptionsClick: (PostItem) -> Unit,
-    bottomSheetState: ModalBottomSheetState
+        paddingValues: PaddingValues,
+        postItems: List<PostItem>,
+        onPullRefresh: () -> Unit,
+        onOptionsClick: (PostItem) -> Unit,
+        bottomSheetState: ModalBottomSheetState
 ) {
     val coroutineScope = rememberCoroutineScope() // Create a CoroutineScope tied to this composable
     val isRefreshing = remember { mutableStateOf(false) }
-
 
     fun refresh() = coroutineScope.launch {
         isRefreshing.value = true
@@ -110,20 +124,20 @@ private fun ListOfLazyCard(
     }
 
     val refreshState = rememberPullRefreshState(
-        refreshing = isRefreshing.value,
-        onRefresh = { refresh() }
+            refreshing = isRefreshing.value,
+            onRefresh = { refresh() }
     )
 
     Box(
-        modifier = Modifier.pullRefresh(refreshState),
+            modifier = Modifier.pullRefresh(refreshState),
     ) {
         LazyColumn(
-            Modifier
-                .background(color = tealGreen)
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                Modifier
+                        .background(color = tealGreen)
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             if (!isRefreshing.value) {
                 items(items = postItems) { cardItem ->
@@ -141,11 +155,11 @@ private fun ListOfLazyCard(
         }
 
         PullRefreshIndicator(
-            refreshing = isRefreshing.value,
-            state = refreshState,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 16.dp)
+                refreshing = isRefreshing.value,
+                state = refreshState,
+                modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 16.dp)
         )
     }
 }

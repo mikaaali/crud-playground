@@ -13,7 +13,7 @@ object RetrofitInstance {
      *
      * include base url is ok in the entire http method calls, but too duplicated, not clean
      */
-    private const val BASE_URL = "http://192.168.1.231:3000/"
+    private const val BASE_URL = "http://192.168.1.147:3000/"
 
     //Add this for logging, so we can view it inside the logcat
     private val client = OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().apply {

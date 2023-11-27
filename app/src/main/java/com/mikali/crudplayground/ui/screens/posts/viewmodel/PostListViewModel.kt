@@ -6,8 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.mikali.crudplayground.ui.screens.posts.repository.PostRepository
 import com.mikali.crudplayground.network.service.NetworkResult
 import com.mikali.crudplayground.ui.screens.posts.model.PostItem
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class PostListViewModel(
@@ -18,12 +21,16 @@ class PostListViewModel(
 
     private var selectedPostItem: PostItem? = null
 
+    private val _events = MutableSharedFlow<PostListEvent>()
+    val events: Flow<PostListEvent> = _events.asSharedFlow()
+
     init {
         fetchAllPosts()
     }
 
     fun fetchAllPosts() {
         viewModelScope.launch {
+            println("chris fetchAllPosts")
             val networkResult: NetworkResult = postRepository.getAllPosts()
 
             when (networkResult) {
@@ -47,28 +54,28 @@ class PostListViewModel(
     fun getSelectedPostItem(): PostItem? = selectedPostItem
 
     fun onDeleteButtonClick() {
-        viewModelScope.launch {
-            println("chris selectedPostId ${selectedPostItem?.id}")
-            selectedPostItem?.id?.let { selectedDeleteId ->
-                val networkResult: NetworkResult =
-                    postRepository.deleteSinglePost(id = selectedDeleteId)
-                when (networkResult) {
-                    is NetworkResult.NetworkSuccess<*> -> {
-                        // Remove the post with the matching id from the list
-                        val newList: List<PostItem> =
-                            _postListUiState.value.filterNot { it.id == selectedDeleteId }
-                        // Update the UI state with the new list
-                        _postListUiState.value = newList
+        val selectedDeleteId = selectedPostItem?.id
+        if (selectedDeleteId != null) {
+            viewModelScope.launch {
+                try {
+                    val networkResult: NetworkResult = postRepository.deleteSinglePost(id = selectedDeleteId)
+                    when (networkResult) {
+                        is NetworkResult.NetworkSuccess<*> -> {
+                            _events.emit(PostListEvent.OnSuccessDeletePost)
+                        }
+                        is NetworkResult.NetworkFailure -> {
+                            // TODO - Handle failure UI state
+                        }
                     }
-
-                    is NetworkResult.NetworkFailure -> {
-                        // TODO- show user you cannot delete an item, setup an event first,
-                        // then listen for the event in the UI, and show the error UI
-
-                    }
+                } finally {
+                    // Reset selected item, even if deletion fails
+                    selectedPostItem = null
                 }
             }
-
         }
+    }
+
+    sealed class PostListEvent {
+        object OnSuccessDeletePost: PostListEvent()
     }
 }
