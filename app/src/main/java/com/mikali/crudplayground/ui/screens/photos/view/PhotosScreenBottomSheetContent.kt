@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SaveAlt
 import androidx.compose.material3.Button
@@ -20,9 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosScreenViewModel
 import com.mikali.crudplayground.ui.theme.sandYellow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PhotosScreenBottomSheetContent(
+    coroutineScope: CoroutineScope,
+    bottomSheetState: ModalBottomSheetState,
     photosScreenViewModel: PhotosScreenViewModel,
 ) {
     Column(
@@ -37,7 +44,13 @@ fun PhotosScreenBottomSheetContent(
     ) {
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { photosScreenViewModel.onDownloadClick() },
+            onClick = {
+                // dismiss bottom sheet
+                coroutineScope.launch {
+                    bottomSheetState.hide()
+                }
+                photosScreenViewModel.onDownloadClick()
+            },
             shape = RoundedCornerShape(16.dp),
             border = BorderStroke(width = 2.dp, color = Color.Black),
             colors = ButtonDefaults.buttonColors(containerColor = sandYellow)

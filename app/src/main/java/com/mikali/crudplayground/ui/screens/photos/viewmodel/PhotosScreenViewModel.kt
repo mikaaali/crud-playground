@@ -22,9 +22,6 @@ class PhotosScreenViewModel(
 
     private lateinit var imageUrl: String
 
-    private val _downloadRequested = MutableStateFlow<Boolean?>(null)
-    val downloadRequested: StateFlow<Boolean?> = _downloadRequested
-
     private val photoRepository = PhotoRepository()
 
     init {
@@ -61,9 +58,7 @@ class PhotosScreenViewModel(
             try {
                 val fileName = generateFileName(imageUrl = imageUrl)
                 val downloadId = appDownloadManager.downloadFile(imageUrl, fileName)
-                _downloadRequested.value = true
             } catch (e: Exception) {
-                _downloadRequested.value = false
                 println("Can't download file")
             }
         }
