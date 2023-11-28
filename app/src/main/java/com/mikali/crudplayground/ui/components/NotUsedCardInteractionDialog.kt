@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.common
+package com.mikali.crudplayground.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,23 +18,17 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostSharedViewModel
 
 @Composable
 fun CardInteractionDialog(
     items: List<String>,
     onDismiss: () -> Unit,
 ) {
-
-    val postSharedViewModel: PostSharedViewModel = viewModel()
-    val singlePostUiState = postSharedViewModel.singlePostUiState.collectAsState()
 
     // Grey box fill the entire screen
     Box(

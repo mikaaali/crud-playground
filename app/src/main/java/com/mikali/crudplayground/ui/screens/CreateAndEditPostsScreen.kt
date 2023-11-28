@@ -33,7 +33,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.mikali.crudplayground.ui.common.BasicTextFieldWithPlaceholderText
+import com.mikali.crudplayground.ui.components.BasicTextFieldWithPlaceholderText
 import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
 import com.mikali.crudplayground.ui.screens.posts.createandedit.view.CreateAndEditPostScreenTopBar
 import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
@@ -43,7 +43,6 @@ import com.mikali.crudplayground.ui.theme.charcoal
 import com.mikali.crudplayground.ui.theme.sandYellow
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateAndEditPostsScreen(
     editMode: EditMode,
@@ -54,7 +53,7 @@ fun CreateAndEditPostsScreen(
 
     val focusManager = LocalFocusManager.current
 
-    val postUiState: State<PostItem> = createAndEditPostViewModel.postUiState.collectAsState()
+    val postUiState: State<PostItem> = createAndEditPostViewModel.postItemUiState.collectAsState()
 
     // Setup for create/edit mode
     if (editMode == EditMode.CREATE) {
@@ -66,8 +65,8 @@ fun CreateAndEditPostsScreen(
     LaunchedEffect(createAndEditPostViewModel.event) {
         createAndEditPostViewModel.event.collectLatest {
             when (it) {
-                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostSuccessFul,
-                CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostSuccessFul -> {
+                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostSuccessful,
+                CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostSuccessful -> {
                     navController.popBackStack()
                     focusManager.clearFocus()
                 }

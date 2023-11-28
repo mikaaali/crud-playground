@@ -16,7 +16,7 @@ class CreateAndEditPostViewModel(
 ) : ViewModel() {
 
     private val _postItemUiState = MutableStateFlow(PostItem.Empty)
-    val postUiState: StateFlow<PostItem> = _postItemUiState
+    val postItemUiState: StateFlow<PostItem> = _postItemUiState
 
     private val _event = MutableSharedFlow<CreateAndEditPostEvent>()
     val event = _event.asSharedFlow()
@@ -56,7 +56,7 @@ class CreateAndEditPostViewModel(
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    _event.emit(CreateAndEditPostEvent.OnCreatePostSuccessFul)
+                    _event.emit(CreateAndEditPostEvent.OnCreatePostSuccessful)
                 }
 
                 is NetworkResult.NetworkFailure -> {
@@ -73,7 +73,7 @@ class CreateAndEditPostViewModel(
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    _event.emit(CreateAndEditPostEvent.OnUpdatePostSuccessFul)
+                    _event.emit(CreateAndEditPostEvent.OnUpdatePostSuccessful)
                 }
 
                 is NetworkResult.NetworkFailure -> {
@@ -84,7 +84,7 @@ class CreateAndEditPostViewModel(
     }
 
     sealed class CreateAndEditPostEvent {
-        object OnCreatePostSuccessFul : CreateAndEditPostEvent()
-        object OnUpdatePostSuccessFul : CreateAndEditPostEvent()
+        object OnCreatePostSuccessful : CreateAndEditPostEvent()
+        object OnUpdatePostSuccessful : CreateAndEditPostEvent()
     }
 }

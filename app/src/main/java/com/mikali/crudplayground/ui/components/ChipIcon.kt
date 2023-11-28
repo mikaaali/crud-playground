@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.common
+package com.mikali.crudplayground.ui.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape

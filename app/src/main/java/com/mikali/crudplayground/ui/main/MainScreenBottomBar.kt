@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.mikali.crudplayground.ui.common.ChipIcon
+import com.mikali.crudplayground.ui.components.ChipIcon
 import com.mikali.crudplayground.ui.main.navigation.ScreenRoutes
 import com.mikali.crudplayground.ui.theme.peach
 import com.mikali.crudplayground.ui.theme.tealGreen

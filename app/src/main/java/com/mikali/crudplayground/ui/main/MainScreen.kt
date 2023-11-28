@@ -5,7 +5,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -24,7 +23,7 @@ import com.mikali.crudplayground.ui.screens.posts.view.EditAndDeletePostBottomSh
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.theme.tealGreen
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
     val appContext = LocalContext.current.applicationContext
