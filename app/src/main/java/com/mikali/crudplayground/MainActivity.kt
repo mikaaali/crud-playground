@@ -2,10 +2,10 @@ package com.mikali.crudplayground
 
 import android.app.DownloadManager
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import com.mikali.crudplayground.network.downloadmanager.DownloadCompletedReceiver
 import com.mikali.crudplayground.ui.main.MainScreen
@@ -32,11 +32,12 @@ class MainActivity : ComponentActivity() {
         //DownloadManager.ACTION_DOWNLOAD_COMPLETE is broadcasted by the OS's DownloadManager when a download completes
         val filter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         // tell broadcast receiver to listen for download complete action
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(downloadCompletedReceiver, filter, RECEIVER_EXPORTED)
-        } else {
-            registerReceiver(downloadCompletedReceiver, filter)
-        }
+        ContextCompat.registerReceiver(
+            /* context = */ this,
+            /* receiver = */ downloadCompletedReceiver,
+            /* filter = */ filter,
+            /* flags = */ ContextCompat.RECEIVER_EXPORTED
+        )
     }
 
     override fun onStop() {
