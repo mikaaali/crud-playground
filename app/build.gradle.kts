@@ -60,7 +60,12 @@ dependencies {
     // Allows you to use Compose UI toolkit's functionality within traditional Android Activities
     implementation("androidx.activity:activity-compose:1.8.1")
 
-    // foundation android
+    /**
+     * foundation android
+     *
+     * items() from LazyColumn have index out of bounds built in issue,
+     * manually update to latest foundation compose version
+     */
     implementation("androidx.compose.foundation:foundation:1.5.4")
     implementation("androidx.compose.foundation:foundation-android:1.6.0-beta01")
 

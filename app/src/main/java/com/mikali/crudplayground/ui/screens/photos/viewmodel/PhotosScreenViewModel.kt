@@ -1,6 +1,5 @@
 package com.mikali.crudplayground.ui.screens.photos.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -39,7 +38,7 @@ class PhotosScreenViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    Log.d("haha", "${networkResult.message}")
+                    // TODO- Thursday: add event to show UI error view
                 }
             }
         }
@@ -62,11 +61,6 @@ class PhotosScreenViewModel(
                 println("Can't download file")
             }
         }
-    }
-
-    sealed class PhotosScreenEvent {
-        object DownloadSuccess : PhotosScreenEvent()
-        object DownloadFailure : PhotosScreenEvent()
     }
 
     class PhotosScreenViewModelFactory(

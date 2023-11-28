@@ -18,6 +18,7 @@ class PostListViewModel(
     private val _postListUiState = MutableStateFlow<List<PostItem>>(emptyList())
     val postListUiState: StateFlow<List<PostItem>> = _postListUiState
 
+    // TODO- Thursday: use private lateinit var
     private val _selectedPostItem = MutableStateFlow(PostItem.Empty)
     val selectedPostItem: StateFlow<PostItem> = _selectedPostItem
 
@@ -39,7 +40,7 @@ class PostListViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    // no-op
+                    // TODO- Thursday: add event to show UI error view
                 }
             }
         }

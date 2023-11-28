@@ -60,7 +60,7 @@ class CreateAndEditPostViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    // no-op
+                    // TODO- Thursday: add event to show UI error view
                 }
             }
         }
@@ -77,7 +77,7 @@ class CreateAndEditPostViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    // no-op
+                    // TODO- Thursday: add event to show UI error view
                 }
             }
         }

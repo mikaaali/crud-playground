@@ -13,7 +13,7 @@ object RetrofitInstance {
      *
      * include base url is ok in the entire http method calls, but too duplicated, not clean
      */
-    //Question for Christian: "http://192.168.1.231:3000/"? how does this work seem like I can just use local instead of forward a remote port
+    // alternative: "http://192.168.1.231:3000/" use local instead of forward a remote port
     private const val BASE_URL = "https://dk44n7ll-3000.usw3.devtunnels.ms/"
 
     //Add this for logging, so we can view it inside the logcat

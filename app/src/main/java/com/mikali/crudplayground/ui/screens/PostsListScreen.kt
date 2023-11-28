@@ -61,6 +61,18 @@ fun PostsListScreen(
         }
     }
 
+    // TODO- Thursday: collect the CreateAndEditPostEvent.OnUpdatePostSuccessful or CreateAndEditPostEvent.OnCreatePostSuccessful event, and fetchAllPosts()
+    /*    LaunchedEffect(createAndEditPostViewModel.event) {
+            createAndEditPostViewModel.event.collectLatest {
+                when (it) {
+                    is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostSuccessful,
+                    CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostSuccessful -> {
+                        postListViewModel.fetchAllPosts()
+                    }
+                }
+            }
+        }*/
+
     Box(modifier = Modifier.fillMaxSize()) {
         ListOfLazyCard(
             paddingValues = paddingValues,
