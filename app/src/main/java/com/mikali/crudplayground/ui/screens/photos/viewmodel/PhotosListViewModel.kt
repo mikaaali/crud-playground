@@ -8,8 +8,10 @@ import com.mikali.crudplayground.network.service.NetworkResult
 import com.mikali.crudplayground.ui.screens.photos.model.PhotoItem
 import com.mikali.crudplayground.ui.screens.photos.repository.PhotoRepository
 import com.mikali.crudplayground.util.generateFileName
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class PhotosListViewModel(
@@ -23,6 +25,9 @@ class PhotosListViewModel(
     val images: StateFlow<List<PhotoItem>> = _images
 
     private lateinit var imageUrl: String
+
+    private val _eventFlow = MutableSharedFlow<PhotosListEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     init {
         fetchAllImages()
@@ -39,7 +44,7 @@ class PhotosListViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    // TODO- Thursday: add event to show UI error view
+                    _eventFlow.emit(PhotosListEvent.ShowNetworkError)
                 }
             }
         }
@@ -63,6 +68,11 @@ class PhotosListViewModel(
             }
         }
     }
+
+    sealed class PhotosListEvent {
+        object ShowNetworkError : PhotosListEvent()
+    }
+
 
     class PhotosScreenViewModelFactory(
         private val appDownloadManager: AppDownloadManager

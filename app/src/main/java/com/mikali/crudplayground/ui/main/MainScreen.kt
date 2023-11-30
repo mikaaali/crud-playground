@@ -6,7 +6,11 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -32,6 +36,7 @@ fun MainScreen(navController: NavHostController) {
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val coroutineScope =
         rememberCoroutineScope() // rememberCoroutineScope is used to launch a coroutine from a composable, move this to viewModel
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val postListViewModel: PostListViewModel = viewModel()
     val createAndEditPostViewModel: CreateAndEditPostViewModel = viewModel()
@@ -45,6 +50,15 @@ fun MainScreen(navController: NavHostController) {
     val notEditScreenRoutes: Boolean = currentRoute != ScreenRoutes.EditPost().route
     val isPhotoScreenRoutes = currentRoute == ScreenRoutes.Photos.route
 
+    LaunchedEffect(key1 = true) {
+        photosListViewModel.eventFlow.collect { event ->
+            when (event) {
+                is PhotosListViewModel.PhotosListEvent.ShowNetworkError -> {
+                    snackbarHostState.showSnackbar("Photo screen network error")
+                }
+            }
+        }
+    }
 
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
@@ -71,6 +85,7 @@ fun MainScreen(navController: NavHostController) {
         }
     ) {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = { if (notEditScreenRoutes) MainScreenTopBar() },
             bottomBar = { if (notEditScreenRoutes) MainScreenBottomBar(navController = navController) },
             content = { paddingValues ->
