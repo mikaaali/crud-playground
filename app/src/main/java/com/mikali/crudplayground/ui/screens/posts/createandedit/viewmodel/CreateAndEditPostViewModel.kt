@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.screens.posts.createandedit
+package com.mikali.crudplayground.ui.screens.posts.createandedit.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

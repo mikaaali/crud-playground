@@ -10,7 +10,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
@@ -21,10 +20,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.mikali.crudplayground.network.downloadmanager.AppDownloadManagerImpl
 import com.mikali.crudplayground.ui.main.navigation.AppNavHost
 import com.mikali.crudplayground.ui.main.navigation.ScreenRoutes
-import com.mikali.crudplayground.ui.screens.photos.view.PhotosScreenBottomSheetContent
+import com.mikali.crudplayground.ui.screens.photos.view.bottomsheet.PhotosScreenBottomSheetContent
 import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosListViewModel
-import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
-import com.mikali.crudplayground.ui.screens.posts.view.EditAndDeletePostBottomSheetContent
+import com.mikali.crudplayground.ui.screens.posts.createandedit.viewmodel.CreateAndEditPostViewModel
+import com.mikali.crudplayground.ui.screens.posts.view.bottomsheet.EditAndDeletePostBottomSheetContent
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.theme.tealGreen
 

@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.screens
+package com.mikali.crudplayground.ui.screens.posts.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,20 +14,15 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,11 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.mikali.crudplayground.ui.components.CRUDSnackBar
 import com.mikali.crudplayground.ui.main.navigation.ScreenRoutes
 import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
 import com.mikali.crudplayground.ui.screens.posts.model.PostItem
-import com.mikali.crudplayground.ui.screens.posts.view.PostCard
+import com.mikali.crudplayground.ui.screens.posts.view.card.PostCard
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.theme.peach
 import com.mikali.crudplayground.ui.theme.tealGreen

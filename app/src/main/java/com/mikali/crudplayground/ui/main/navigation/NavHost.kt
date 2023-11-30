@@ -10,11 +10,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.mikali.crudplayground.ui.screens.CreateAndEditPostsScreen
-import com.mikali.crudplayground.ui.screens.PhotosListScreen
-import com.mikali.crudplayground.ui.screens.PostsListScreen
+import com.mikali.crudplayground.ui.screens.posts.createandedit.view.CreateAndEditPostsScreen
+import com.mikali.crudplayground.ui.screens.photos.view.PhotosListScreen
+import com.mikali.crudplayground.ui.screens.posts.view.PostsListScreen
 import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosListViewModel
-import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
+import com.mikali.crudplayground.ui.screens.posts.createandedit.viewmodel.CreateAndEditPostViewModel
 import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 

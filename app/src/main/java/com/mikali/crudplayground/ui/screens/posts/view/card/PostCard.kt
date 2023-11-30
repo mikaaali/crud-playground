@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.screens.posts.view
+package com.mikali.crudplayground.ui.screens.posts.view.card
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
