@@ -3,6 +3,7 @@ package com.mikali.crudplayground.ui.main.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -26,6 +27,7 @@ fun AppNavHost(
     postListViewModel: PostListViewModel,
     createAndEditPostViewModel: CreateAndEditPostViewModel,
     photosListViewModel: PhotosListViewModel,
+    snackbarHostState: SnackbarHostState
 ) {
     NavHost(
         navController = navController,
@@ -37,6 +39,7 @@ fun AppNavHost(
                 bottomSheetState = bottomSheetState,
                 navController = navController,
                 postListViewModel = postListViewModel,
+                snackbarHostState = snackbarHostState
             )
         }
         composable(

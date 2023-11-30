@@ -5,6 +5,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -27,7 +28,7 @@ import com.mikali.crudplayground.ui.screens.posts.view.EditAndDeletePostBottomSh
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.theme.tealGreen
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
     val appContext = LocalContext.current.applicationContext
@@ -49,16 +50,6 @@ fun MainScreen(navController: NavHostController) {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val notEditScreenRoutes: Boolean = currentRoute != ScreenRoutes.EditPost().route
     val isPhotoScreenRoutes = currentRoute == ScreenRoutes.Photos.route
-
-    LaunchedEffect(key1 = true) {
-        photosListViewModel.eventFlow.collect { event ->
-            when (event) {
-                is PhotosListViewModel.PhotosListEvent.ShowNetworkError -> {
-                    snackbarHostState.showSnackbar("Photo screen network error")
-                }
-            }
-        }
-    }
 
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
@@ -96,6 +87,7 @@ fun MainScreen(navController: NavHostController) {
                     postListViewModel = postListViewModel,
                     createAndEditPostViewModel = createAndEditPostViewModel,
                     photosListViewModel = photosListViewModel,
+                    snackbarHostState = snackbarHostState
                 )
             }
         )

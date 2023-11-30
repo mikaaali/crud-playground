@@ -14,13 +14,20 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.mikali.crudplayground.ui.components.CRUDSnackBar
 import com.mikali.crudplayground.ui.main.navigation.ScreenRoutes
 import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
 import com.mikali.crudplayground.ui.screens.posts.model.PostItem
@@ -49,9 +57,12 @@ fun PostsListScreen(
     paddingValues: PaddingValues,
     bottomSheetState: ModalBottomSheetState,
     navController: NavController,
-    postListViewModel: PostListViewModel
+    postListViewModel: PostListViewModel,
+    snackbarHostState: SnackbarHostState,
 ) {
-    var showErrorDialog = remember { mutableStateOf(false) }
+    val showErrorDialog = remember { mutableStateOf(false) }
+
+    val showSnackBar = remember { mutableStateOf(false) }
 
     val postListUiState by postListViewModel.postListUiState.collectAsState(initial = emptyList())
 
@@ -60,6 +71,7 @@ fun PostsListScreen(
             when (event) {
                 is PostListViewModel.PostListEvent.OnSuccessDeletePost -> {
                     postListViewModel.fetchAllPosts()
+                    snackbarHostState.showSnackbar("Post was deleted successfully", "Dismiss", withDismissAction = true, SnackbarDuration.Short)
                 }
 
                 is PostListViewModel.PostListEvent.ShowNetworkError -> {
@@ -75,7 +87,7 @@ fun PostsListScreen(
             title = { Text("Post List Network Error") },
             text = { Text("Post List Network Error") },
             confirmButton = {
-                //TODO
+                //TODO: dismiss the AlertDialog
             }
         )
     }
