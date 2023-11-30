@@ -18,7 +18,8 @@ class PostListViewModel(
     private val _postListUiState = MutableStateFlow<List<PostItem>>(emptyList())
     val postListUiState: StateFlow<List<PostItem>> = _postListUiState
 
-    // TODO- Thursday: use private lateinit var
+    // TODO- this is StateFlow is ok because we listen for the data in the CreateAndEdit UI and pass it to the CreateAndEdit viewModel,
+    //  maybe in the future, a shared view model with child viewModels is better?
     private val _selectedPostItem = MutableStateFlow(PostItem.Empty)
     val selectedPostItem: StateFlow<PostItem> = _selectedPostItem
 
