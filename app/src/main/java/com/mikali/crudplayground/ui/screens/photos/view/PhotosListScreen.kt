@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.screens
+package com.mikali.crudplayground.ui.screens.photos.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +28,7 @@ import coil.request.ImageRequest
 import com.mikali.crudplayground.R
 import com.mikali.crudplayground.ui.screens.photos.model.PhotoItem
 import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosListViewModel
+import com.mikali.crudplayground.ui.screens.posts.view.showEditAndDeleteBottomSheet
 import com.mikali.crudplayground.ui.theme.tealGreen
 import kotlinx.coroutines.launch
 

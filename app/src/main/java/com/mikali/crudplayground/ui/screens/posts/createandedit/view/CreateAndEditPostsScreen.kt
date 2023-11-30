@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.screens
+package com.mikali.crudplayground.ui.screens.posts.createandedit.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -34,8 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.mikali.crudplayground.ui.components.BasicTextFieldWithPlaceholderText
-import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
-import com.mikali.crudplayground.ui.screens.posts.createandedit.view.CreateAndEditPostScreenTopBar
+import com.mikali.crudplayground.ui.screens.posts.createandedit.viewmodel.CreateAndEditPostViewModel
 import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
 import com.mikali.crudplayground.ui.screens.posts.model.PostItem
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel

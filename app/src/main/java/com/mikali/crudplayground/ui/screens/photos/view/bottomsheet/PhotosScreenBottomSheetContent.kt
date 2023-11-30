@@ -1,4 +1,4 @@
-package com.mikali.crudplayground.ui.screens.photos.view
+package com.mikali.crudplayground.ui.screens.photos.view.bottomsheet
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
