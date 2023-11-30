@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,16 +51,33 @@ fun PostsListScreen(
     navController: NavController,
     postListViewModel: PostListViewModel
 ) {
+    var showErrorDialog = remember { mutableStateOf(false) }
+
     val postListUiState by postListViewModel.postListUiState.collectAsState(initial = emptyList())
 
-    LaunchedEffect(postListViewModel.events) {
-        postListViewModel.events.collect { event ->
+    LaunchedEffect(postListViewModel.eventFlow) {
+        postListViewModel.eventFlow.collect { event ->
             when (event) {
                 is PostListViewModel.PostListEvent.OnSuccessDeletePost -> {
                     postListViewModel.fetchAllPosts()
                 }
+
+                is PostListViewModel.PostListEvent.ShowNetworkError -> {
+                    showErrorDialog.value = true
+                }
             }
         }
+    }
+
+    if (showErrorDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showErrorDialog.value = false },
+            title = { Text("Post List Network Error") },
+            text = { Text("Post List Network Error") },
+            confirmButton = {
+                //TODO
+            }
+        )
     }
 
     // TODO- Thursday: collect the CreateAndEditPostEvent.OnUpdatePostSuccessful or CreateAndEditPostEvent.OnCreatePostSuccessful event, and fetchAllPosts()

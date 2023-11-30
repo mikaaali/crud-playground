@@ -23,8 +23,8 @@ class PostListViewModel(
     private val _selectedPostItem = MutableStateFlow(PostItem.Empty)
     val selectedPostItem: StateFlow<PostItem> = _selectedPostItem
 
-    private val _events = MutableSharedFlow<PostListEvent>()
-    val events: Flow<PostListEvent> = _events.asSharedFlow()
+    private val _eventFlow = MutableSharedFlow<PostListEvent>()
+    val eventFlow: Flow<PostListEvent> = _eventFlow.asSharedFlow()
 
     init {
         fetchAllPosts()
@@ -41,7 +41,7 @@ class PostListViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    // TODO- Thursday: add event to show UI error view
+                    _eventFlow.emit(PostListEvent.ShowNetworkError)
                 }
             }
         }
@@ -60,7 +60,7 @@ class PostListViewModel(
                         postRepository.deleteSinglePost(id = selectedDeleteId)
                     when (networkResult) {
                         is NetworkResult.NetworkSuccess<*> -> {
-                            _events.emit(PostListEvent.OnSuccessDeletePost)
+                            _eventFlow.emit(PostListEvent.OnSuccessDeletePost)
                         }
 
                         is NetworkResult.NetworkFailure -> {
@@ -77,5 +77,6 @@ class PostListViewModel(
 
     sealed class PostListEvent {
         object OnSuccessDeletePost : PostListEvent()
+        object ShowNetworkError : PostListEvent()
     }
 }
