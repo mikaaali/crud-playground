@@ -17,7 +17,7 @@ import com.mikali.crudplayground.network.downloadmanager.AppDownloadManagerImpl
 import com.mikali.crudplayground.ui.main.navigation.AppNavHost
 import com.mikali.crudplayground.ui.main.navigation.ScreenRoutes
 import com.mikali.crudplayground.ui.screens.photos.view.PhotosScreenBottomSheetContent
-import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosScreenViewModel
+import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosListViewModel
 import com.mikali.crudplayground.ui.screens.posts.createandedit.CreateAndEditPostViewModel
 import com.mikali.crudplayground.ui.screens.posts.view.EditAndDeletePostBottomSheetContent
 import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
@@ -35,8 +35,8 @@ fun MainScreen(navController: NavHostController) {
 
     val postListViewModel: PostListViewModel = viewModel()
     val createAndEditPostViewModel: CreateAndEditPostViewModel = viewModel()
-    val photosScreenViewModel: PhotosScreenViewModel = viewModel(
-        factory = PhotosScreenViewModel.PhotosScreenViewModelFactory(
+    val photosListViewModel: PhotosListViewModel = viewModel(
+        factory = PhotosListViewModel.PhotosScreenViewModelFactory(
             appDownloadManager = AppDownloadManagerImpl(context = appContext),
         )
     )
@@ -55,7 +55,7 @@ fun MainScreen(navController: NavHostController) {
                 PhotosScreenBottomSheetContent(
                     coroutineScope = coroutineScope,
                     bottomSheetState = bottomSheetState,
-                    photosScreenViewModel = photosScreenViewModel,
+                    photosListViewModel = photosListViewModel,
                 )
             } else {
                 EditAndDeletePostBottomSheetContent(
@@ -80,7 +80,7 @@ fun MainScreen(navController: NavHostController) {
                     bottomSheetState = bottomSheetState,
                     postListViewModel = postListViewModel,
                     createAndEditPostViewModel = createAndEditPostViewModel,
-                    photosScreenViewModel = photosScreenViewModel,
+                    photosListViewModel = photosListViewModel,
                 )
             }
         )

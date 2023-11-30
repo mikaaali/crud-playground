@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosScreenViewModel
+import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosListViewModel
 import com.mikali.crudplayground.ui.theme.sandYellow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 fun PhotosScreenBottomSheetContent(
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
-    photosScreenViewModel: PhotosScreenViewModel,
+    photosListViewModel: PhotosListViewModel,
 ) {
     Column(
         modifier = Modifier
@@ -49,7 +49,7 @@ fun PhotosScreenBottomSheetContent(
                 coroutineScope.launch {
                     bottomSheetState.hide()
                 }
-                photosScreenViewModel.onDownloadClick()
+                photosListViewModel.onDownloadClick()
             },
             shape = RoundedCornerShape(16.dp),
             border = BorderStroke(width = 2.dp, color = Color.Black),

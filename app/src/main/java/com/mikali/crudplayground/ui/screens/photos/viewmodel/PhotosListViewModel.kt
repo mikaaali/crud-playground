@@ -12,16 +12,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class PhotosScreenViewModel(
+class PhotosListViewModel(
     private val appDownloadManager: AppDownloadManager,
 ) : ViewModel() {
+
+    // TODO - should in the viewModel constructor
+    private val photoRepository = PhotoRepository()
 
     private val _images = MutableStateFlow<List<PhotoItem>>(emptyList())
     val images: StateFlow<List<PhotoItem>> = _images
 
     private lateinit var imageUrl: String
-
-    private val photoRepository = PhotoRepository()
 
     init {
         fetchAllImages()
@@ -69,7 +70,7 @@ class PhotosScreenViewModel(
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PhotosScreenViewModel(
+            return PhotosListViewModel(
                 appDownloadManager = appDownloadManager
             ) as T
         }

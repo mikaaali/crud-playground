@@ -27,7 +27,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.mikali.crudplayground.R
 import com.mikali.crudplayground.ui.screens.photos.model.PhotoItem
-import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosScreenViewModel
+import com.mikali.crudplayground.ui.screens.photos.viewmodel.PhotosListViewModel
 import com.mikali.crudplayground.ui.theme.tealGreen
 import kotlinx.coroutines.launch
 
@@ -36,10 +36,10 @@ import kotlinx.coroutines.launch
 fun PhotosListScreen(
     paddingValues: PaddingValues,
     bottomSheetState: ModalBottomSheetState,
-    photosScreenViewModel: PhotosScreenViewModel,
+    photosListViewModel: PhotosListViewModel,
 ) {
 
-    val uiState: State<List<PhotoItem>> = photosScreenViewModel.images.collectAsState()
+    val uiState: State<List<PhotoItem>> = photosListViewModel.images.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     LazyVerticalGrid(
@@ -60,7 +60,7 @@ fun PhotosListScreen(
                     .aspectRatio(1f)
                     .clickable {
                         coroutineScope.launch {
-                            photosScreenViewModel.onPhotoClicked(imageUrl = it.imageUrl)
+                            photosListViewModel.onPhotoClicked(imageUrl = it.imageUrl)
                             showEditAndDeleteBottomSheet(bottomSheetState)
                         }
                     }
