@@ -43,6 +43,7 @@ import com.mikali.crudplayground.ui.theme.charcoal
 import com.mikali.crudplayground.ui.theme.sandYellow
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateAndEditPostsScreen(
     editMode: EditMode,
@@ -67,6 +68,8 @@ fun CreateAndEditPostsScreen(
             when (it) {
                 is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostSuccessful,
                 CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostSuccessful -> {
+                    println("chris sending event to postListViewModel")
+                    postListViewModel.onPostSuccessfullyCreated()
                     navController.popBackStack()
                     focusManager.clearFocus()
                 }

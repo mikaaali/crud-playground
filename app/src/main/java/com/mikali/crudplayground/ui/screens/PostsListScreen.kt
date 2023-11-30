@@ -49,6 +49,7 @@ import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.theme.peach
 import com.mikali.crudplayground.ui.theme.tealGreen
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -67,8 +68,16 @@ fun PostsListScreen(
     val postListUiState by postListViewModel.postListUiState.collectAsState(initial = emptyList())
 
     LaunchedEffect(postListViewModel.eventFlow) {
-        postListViewModel.eventFlow.collect { event ->
+        println("chris before collecting ${postListViewModel.eventFlow}")
+        postListViewModel.eventFlow.collectLatest { event ->
+            println("chris eventflow ${event}")
             when (event) {
+                is PostListViewModel.PostListEvent.OnSuccessCreatePost -> {
+                    println("chris PostsListScreen.kt: PostListEvent.OnSuccessCreatePost")
+                    postListViewModel.fetchAllPosts()
+                    snackbarHostState.showSnackbar("Post was created successfully", "Dismiss", withDismissAction = true, SnackbarDuration.Short)
+                }
+
                 is PostListViewModel.PostListEvent.OnSuccessDeletePost -> {
                     postListViewModel.fetchAllPosts()
                     snackbarHostState.showSnackbar("Post was deleted successfully", "Dismiss", withDismissAction = true, SnackbarDuration.Short)

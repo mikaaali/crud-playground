@@ -75,7 +75,15 @@ class PostListViewModel(
         }
     }
 
+    fun onPostSuccessfullyCreated() {
+        viewModelScope.launch {
+            println("chris event sent")
+            _eventFlow.emit(PostListEvent.OnSuccessCreatePost)
+        }
+    }
+
     sealed class PostListEvent {
+        object OnSuccessCreatePost : PostListEvent()
         object OnSuccessDeletePost : PostListEvent()
         object ShowNetworkError : PostListEvent()
     }
