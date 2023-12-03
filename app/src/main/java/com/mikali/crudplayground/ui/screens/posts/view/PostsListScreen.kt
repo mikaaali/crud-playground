@@ -64,7 +64,7 @@ fun PostsListScreen(
         postListViewModel.eventFlow.collect { event ->
             Log.d("haha PostsListScreen", "Collected event: $event")
             when (event) {
-                is PostListViewModel.PostListEvent.OnSuccessCreatePost -> {
+                is PostListViewModel.PostListEvent.OnCreatePostSuccess -> {
                     postListViewModel.fetchAllPosts()
                     snackbarHostState.showSnackbar(
                         "Post was created successfully",
@@ -74,7 +74,7 @@ fun PostsListScreen(
                     )
                 }
 
-                is PostListViewModel.PostListEvent.OnSuccessDeletePost -> {
+                is PostListViewModel.PostListEvent.OnDeletePostSuccess -> {
                     postListViewModel.fetchAllPosts()
                     snackbarHostState.showSnackbar(
                         "Post was deleted successfully",
@@ -84,7 +84,7 @@ fun PostsListScreen(
                     )
                 }
 
-                is PostListViewModel.PostListEvent.OnFetchAllPostsFailure -> {
+                is PostListViewModel.PostListEvent.OnFetchAllPostsFail -> {
                     alertDialogUiState.value = CRUDAlertDialogUiState(
                         showDialog = true,
                         title = "Network Error",

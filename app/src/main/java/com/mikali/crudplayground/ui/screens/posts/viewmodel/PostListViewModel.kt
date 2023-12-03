@@ -43,7 +43,7 @@ class PostListViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    _eventFlow.emit(PostListEvent.OnFetchAllPostsFailure)
+                    _eventFlow.emit(PostListEvent.OnFetchAllPostsFail)
                 }
             }
         }
@@ -62,7 +62,7 @@ class PostListViewModel(
                         postRepository.deleteSinglePost(id = selectedDeleteId)
                     when (networkResult) {
                         is NetworkResult.NetworkSuccess<*> -> {
-                            _eventFlow.emit(PostListEvent.OnSuccessDeletePost)
+                            _eventFlow.emit(PostListEvent.OnDeletePostSuccess)
                         }
 
                         is NetworkResult.NetworkFailure -> {
@@ -84,7 +84,7 @@ class PostListViewModel(
                     "haha PostListViewModel",
                     "onPostSuccessfullyCreated(): Starting event emission..."
                 )
-                _eventFlow.emit(PostListEvent.OnSuccessCreatePost)
+                _eventFlow.emit(PostListEvent.OnCreatePostSuccess)
                 Log.d(
                     "haha PostListViewModel",
                     "onPostSuccessfullyCreated(): Event emitted successfully!"
@@ -106,8 +106,8 @@ class PostListViewModel(
     }
 
     sealed class PostListEvent {
-        object OnSuccessCreatePost : PostListEvent()
-        object OnSuccessDeletePost : PostListEvent()
-        object OnFetchAllPostsFailure : PostListEvent()
+        object OnCreatePostSuccess : PostListEvent()
+        object OnDeletePostSuccess : PostListEvent()
+        object OnFetchAllPostsFail : PostListEvent()
     }
 }
