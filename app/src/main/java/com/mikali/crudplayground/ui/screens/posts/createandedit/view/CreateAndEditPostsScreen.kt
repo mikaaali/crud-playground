@@ -75,18 +75,18 @@ fun CreateAndEditPostsScreen(
             val eventTime = System.currentTimeMillis()
             Log.d("haha createAndEditPostViewModel", "Collected event: $event at: $eventTime")
             when (event) {
-                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostSuccessful -> {
+                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostSuccess -> {
                     postListViewModel.onPostSuccessfullyCreated()
                     navController.popBackStack()
                     focusManager.clearFocus()
                 }
 
-                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostSuccessful -> {
+                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostSuccess -> {
                     navController.popBackStack()
                     focusManager.clearFocus()
                 }
 
-                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostFailure -> {
+                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostFail -> {
                     alertDialogUiState.value = CRUDAlertDialogUiState(
                         showDialog = true,
                         title = "Network Error",
@@ -98,7 +98,7 @@ fun CreateAndEditPostsScreen(
                     )
                 }
 
-                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostFailure -> {
+                is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostFail -> {
                     alertDialogUiState.value = CRUDAlertDialogUiState(
                         showDialog = true,
                         title = "Network Error",

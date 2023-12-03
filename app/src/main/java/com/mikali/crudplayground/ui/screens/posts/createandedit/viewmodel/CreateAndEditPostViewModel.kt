@@ -56,11 +56,11 @@ class CreateAndEditPostViewModel(
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    _event.emit(CreateAndEditPostEvent.OnCreatePostSuccessful)
+                    _event.emit(CreateAndEditPostEvent.OnCreatePostSuccess)
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    _event.emit(CreateAndEditPostEvent.OnCreatePostFailure)
+                    _event.emit(CreateAndEditPostEvent.OnCreatePostFail)
                 }
             }
         }
@@ -73,20 +73,20 @@ class CreateAndEditPostViewModel(
 
             when (networkResult) {
                 is NetworkResult.NetworkSuccess<*> -> {
-                    _event.emit(CreateAndEditPostEvent.OnUpdatePostSuccessful)
+                    _event.emit(CreateAndEditPostEvent.OnUpdatePostSuccess)
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    _event.emit(CreateAndEditPostEvent.OnUpdatePostFailure)
+                    _event.emit(CreateAndEditPostEvent.OnUpdatePostFail)
                 }
             }
         }
     }
 
     sealed class CreateAndEditPostEvent {
-        object OnCreatePostSuccessful : CreateAndEditPostEvent()
-        object OnUpdatePostSuccessful : CreateAndEditPostEvent()
-        object OnCreatePostFailure : CreateAndEditPostEvent()
-        object OnUpdatePostFailure : CreateAndEditPostEvent()
+        object OnCreatePostSuccess : CreateAndEditPostEvent()
+        object OnUpdatePostSuccess : CreateAndEditPostEvent()
+        object OnCreatePostFail : CreateAndEditPostEvent()
+        object OnUpdatePostFail : CreateAndEditPostEvent()
     }
 }
