@@ -60,7 +60,7 @@ class CreateAndEditPostViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    // TODO- Thursday: add event to show UI error view
+                    _event.emit(CreateAndEditPostEvent.OnCreatePostFailure)
                 }
             }
         }
@@ -77,7 +77,7 @@ class CreateAndEditPostViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    // TODO- Thursday: add event to show UI error view
+                    _event.emit(CreateAndEditPostEvent.OnUpdatePostFailure)
                 }
             }
         }
@@ -86,5 +86,7 @@ class CreateAndEditPostViewModel(
     sealed class CreateAndEditPostEvent {
         object OnCreatePostSuccessful : CreateAndEditPostEvent()
         object OnUpdatePostSuccessful : CreateAndEditPostEvent()
+        object OnCreatePostFailure : CreateAndEditPostEvent()
+        object OnUpdatePostFailure : CreateAndEditPostEvent()
     }
 }

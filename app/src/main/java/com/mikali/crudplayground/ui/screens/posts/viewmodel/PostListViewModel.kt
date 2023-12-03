@@ -1,10 +1,12 @@
 package com.mikali.crudplayground.ui.screens.posts.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mikali.crudplayground.network.service.NetworkResult
 import com.mikali.crudplayground.ui.screens.posts.model.PostItem
 import com.mikali.crudplayground.ui.screens.posts.repository.PostRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,7 +43,7 @@ class PostListViewModel(
                 }
 
                 is NetworkResult.NetworkFailure -> {
-                    _eventFlow.emit(PostListEvent.ShowNetworkError)
+                    _eventFlow.emit(PostListEvent.OnFetchAllPostsFailure)
                 }
             }
         }
@@ -77,14 +79,35 @@ class PostListViewModel(
 
     fun onPostSuccessfullyCreated() {
         viewModelScope.launch {
-            println("chris event sent")
-            _eventFlow.emit(PostListEvent.OnSuccessCreatePost)
+            try {
+                Log.d(
+                    "haha PostListViewModel",
+                    "onPostSuccessfullyCreated(): Starting event emission..."
+                )
+                _eventFlow.emit(PostListEvent.OnSuccessCreatePost)
+                Log.d(
+                    "haha PostListViewModel",
+                    "onPostSuccessfullyCreated(): Event emitted successfully!"
+                )
+            } catch (e: CancellationException) {
+                Log.e(
+                    "haha PostListViewModel",
+                    "onPostSuccessfullyCreated(): Coroutine cancelled during emission!",
+                    e
+                )
+            } catch (e: Exception) {
+                Log.e(
+                    "haha PostListViewModel",
+                    "onPostSuccessfullyCreated(): Unexpected error during emission!",
+                    e
+                )
+            }
         }
     }
 
     sealed class PostListEvent {
         object OnSuccessCreatePost : PostListEvent()
         object OnSuccessDeletePost : PostListEvent()
-        object ShowNetworkError : PostListEvent()
+        object OnFetchAllPostsFailure : PostListEvent()
     }
 }

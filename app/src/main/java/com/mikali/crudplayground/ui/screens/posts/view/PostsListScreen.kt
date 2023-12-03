@@ -1,5 +1,6 @@
 package com.mikali.crudplayground.ui.screens.posts.view
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,10 +20,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,6 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.mikali.crudplayground.ui.alertDialog.CRUDAlertDialog
+import com.mikali.crudplayground.ui.alertDialog.CRUDAlertDialogUiState
 import com.mikali.crudplayground.ui.main.navigation.ScreenRoutes
 import com.mikali.crudplayground.ui.screens.posts.enums.EditMode
 import com.mikali.crudplayground.ui.screens.posts.model.PostItem
@@ -43,7 +44,6 @@ import com.mikali.crudplayground.ui.screens.posts.viewmodel.PostListViewModel
 import com.mikali.crudplayground.ui.theme.peach
 import com.mikali.crudplayground.ui.theme.tealGreen
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -55,57 +55,53 @@ fun PostsListScreen(
     postListViewModel: PostListViewModel,
     snackbarHostState: SnackbarHostState,
 ) {
-    val showErrorDialog = remember { mutableStateOf(false) }
-
-    val showSnackBar = remember { mutableStateOf(false) }
+    val alertDialogUiState = remember { mutableStateOf(CRUDAlertDialogUiState(showDialog = false)) }
 
     val postListUiState by postListViewModel.postListUiState.collectAsState(initial = emptyList())
 
     LaunchedEffect(postListViewModel.eventFlow) {
-        println("chris before collecting ${postListViewModel.eventFlow}")
-        postListViewModel.eventFlow.collectLatest { event ->
-            println("chris eventflow ${event}")
+        Log.d("haha PostsListScreen", "LaunchedEffect started collecting")
+        postListViewModel.eventFlow.collect { event ->
+            Log.d("haha PostsListScreen", "Collected event: $event")
             when (event) {
                 is PostListViewModel.PostListEvent.OnSuccessCreatePost -> {
-                    println("chris PostsListScreen.kt: PostListEvent.OnSuccessCreatePost")
                     postListViewModel.fetchAllPosts()
-                    snackbarHostState.showSnackbar("Post was created successfully", "Dismiss", withDismissAction = true, SnackbarDuration.Short)
+                    snackbarHostState.showSnackbar(
+                        "Post was created successfully",
+                        "Dismiss",
+                        withDismissAction = true,
+                        SnackbarDuration.Short
+                    )
                 }
 
                 is PostListViewModel.PostListEvent.OnSuccessDeletePost -> {
                     postListViewModel.fetchAllPosts()
-                    snackbarHostState.showSnackbar("Post was deleted successfully", "Dismiss", withDismissAction = true, SnackbarDuration.Short)
+                    snackbarHostState.showSnackbar(
+                        "Post was deleted successfully",
+                        "Dismiss",
+                        withDismissAction = true,
+                        SnackbarDuration.Short
+                    )
                 }
 
-                is PostListViewModel.PostListEvent.ShowNetworkError -> {
-                    showErrorDialog.value = true
+                is PostListViewModel.PostListEvent.OnFetchAllPostsFailure -> {
+                    alertDialogUiState.value = CRUDAlertDialogUiState(
+                        showDialog = true,
+                        title = "Network Error",
+                        text = "Currently unable to fetch all the list of post items",
+                        onConfirm = {
+                            alertDialogUiState.value =
+                                alertDialogUiState.value.copy(showDialog = false)
+                        }
+                    )
                 }
             }
         }
     }
 
-    if (showErrorDialog.value) {
-        AlertDialog(
-            onDismissRequest = { showErrorDialog.value = false },
-            title = { Text("Post List Network Error") },
-            text = { Text("Post List Network Error") },
-            confirmButton = {
-                //TODO: dismiss the AlertDialog
-            }
-        )
+    if (alertDialogUiState.value.showDialog) {
+        CRUDAlertDialog(alertDialogUiState)
     }
-
-    // TODO- Thursday: collect the CreateAndEditPostEvent.OnUpdatePostSuccessful or CreateAndEditPostEvent.OnCreatePostSuccessful event, and fetchAllPosts()
-    /*    LaunchedEffect(createAndEditPostViewModel.event) {
-            createAndEditPostViewModel.event.collectLatest {
-                when (it) {
-                    is CreateAndEditPostViewModel.CreateAndEditPostEvent.OnCreatePostSuccessful,
-                    CreateAndEditPostViewModel.CreateAndEditPostEvent.OnUpdatePostSuccessful -> {
-                        postListViewModel.fetchAllPosts()
-                    }
-                }
-            }
-        }*/
 
     Box(modifier = Modifier.fillMaxSize()) {
         ListOfLazyCard(
@@ -144,6 +140,7 @@ fun PostsListScreen(
 
     }
 }
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
